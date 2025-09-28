@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ChannelService } from '../services/channel.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
   private channelService = inject(ChannelService);
   private router = inject(Router);
   private dataUser = this.userService;
+  private auth = inject(AuthService);
 
   get isFormValid(): boolean {
     return (
@@ -61,18 +63,17 @@ export class LoginComponent implements OnInit {
   async login() {
     const backgroundOverlay = document.getElementById('background-overlay');
     try {
-      await this.userService.loginService(this.email, this.password);
-      if (this.userService.loginIsSucess) {
-        this.handleSuccessfulLogin(backgroundOverlay);
-      } else {
-        this.loginError = 'Ungültige Email oder Passwort';
-      }
+      // 1) Direkt am Backend einloggen (E-Mail/Passwort)
+      await this.auth.backendLogin(this.email, this.password);
+
+      // 2) Danach alles wie gehabt (Animation, States, Routing)
+      this.handleSuccessfulLogin(backgroundOverlay);
     } catch (error) {
       console.error('Login-Fehler:', error);
-      this.loginError = 'Ein Fehler ist aufgetreten';
+      this.loginError = 'Ungültige Email oder Passwort';
     }
   }
-
+  
   private handleSuccessfulLogin(backgroundOverlay: HTMLElement | null) {
     if (backgroundOverlay) {
       backgroundOverlay.classList.add('active');

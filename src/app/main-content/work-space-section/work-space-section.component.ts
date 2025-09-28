@@ -54,7 +54,7 @@ import { ChannelSectionComponent } from '../channel-section/channel-section.comp
     ChatSectionComponent,
     DatePipe,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  /* changeDetection: ChangeDetectionStrategy.OnPush, */
   templateUrl: './work-space-section.component.html',
   styleUrl: './work-space-section.component.scss',
 })
