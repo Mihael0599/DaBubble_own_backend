@@ -1,0 +1,181 @@
+@use '../../../styles.scss' as *;
+
+.write-message-container {
+    position: relative;
+    width: 96%;
+    padding: 0 20px;
+}
+
+.mat-mdc-form-field {
+    width: 100%;
+}
+
+input {
+    color: #686868 !important;
+    border: unset;
+}
+
+input:focus {
+    border: unset;
+}
+
+mat-label {
+    color: #686868;
+}
+
+
+::ng-deep .example-full-width .mat-mdc-text-field-wrapper {
+    height: 145px !important;
+    border: 1px solid #ADB0D9;
+    border-radius: 20px !important;
+}
+
+::ng-deep.mdc-line-ripple {
+    display: none !important;
+}
+
+::ng-deep.mat-mdc-form-field-infix {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+
+    >.icons-container {
+        @include dFlex(space-between);
+        padding-left: 4px;
+        padding-right: 4px;
+
+        >div {
+            @include dFlex();
+            border-radius: 20px;
+
+            >div {
+                @include dFlex();
+                height: 40px;
+                width: 40px;
+                border-radius: 20px;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: #ECEEFE;
+                    border-radius: 20px;
+                }
+
+                &.reaction-icon:hover img {
+                    content: url('./../../assets/send-email/send-icon-color.png');
+                }
+
+                &.mention-icon:hover img {
+                    content: url('./../../assets/send-email/mention-color.png');
+                }
+            }
+        }
+
+        >.send-icon-container {
+            @include dFlex();
+            height: 40px;
+            width: 40px;
+            border-radius: 20px;
+
+            &:hover {
+                cursor: pointer;
+                border-radius: 20px;
+
+                img {
+                    content: url('./../../assets/send-email/send-icon-color.png');
+                }
+            }
+        }
+    }
+}
+
+.send-icon-container {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.user-chanel-list-container>div:first-child {
+    position: relative;
+    display: inline-block;
+}
+
+.user-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+}
+
+.status-img {
+    position: absolute;
+    top: 30px;
+    left: 28px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: white;
+}
+
+.mention-container {
+    position: absolute;
+    bottom: 85%;
+    left: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 100;
+    padding: 24px;
+    background-color: white;
+    border: 1px solid #ADB0D9;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 370px;
+    color: black;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 10px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ADB0D9;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #535AF1;
+    }
+
+    >div {
+        >.user-chanel-list-container {
+            @include dFlex(flex-start);
+            flex-direction: row;
+            gap: 10px;
+            padding: 5px 20px;
+            cursor: pointer;
+            border-radius: 100px;
+
+            .channel-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            &:hover {
+                background-color: #ECEEFE;
+
+                >p {
+                    color: #535AF1;
+                }
+            }
+        }
+    }
+}

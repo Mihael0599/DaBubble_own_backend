@@ -1,0 +1,89 @@
+@use './../../../../styles.scss' as *;
+
+.select-user-main-cont {
+  @include dFlex(space-between, unset);
+  flex-direction: column;
+  height: 100%;
+}
+
+.marg-bot {
+  margin-bottom: 10px
+}
+
+.selector {
+  >mat-radio-group {
+    font-size: 18px;
+    font-weight: 400;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+  }
+  >mat-radio-button {
+    font-size: 18px;
+    font-weight: 400;
+  }
+}
+
+.search-user-cont {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 630px;
+  height: 55px;
+}
+
+.search-user {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ADB0D9; 
+  border-radius: 30px;
+  padding: 15px 20px 15px 20px;
+  box-sizing: border-box;
+  font-size: 18px;
+  font-weight: 400;
+    &::placeholder {
+        font-size: 18px;
+        font-weight: 400;
+        color: #686868;  
+    }
+    &:focus {
+    border: 1px solid #ADB0D9; 
+    outline: none;                      
+  }
+}
+
+.selected-users-cont {
+  width: 630px;
+  height: 55px;
+  border-radius: 30px;
+  border: solid 1px #ADB0D9;  
+  @include dFlex(flex-start, center);
+  flex-direction: row; 
+  margin-bottom: 12px;
+}  
+
+.selected-users {
+  height: 40px;
+  @include dFlex(unset, center);
+  flex-direction: row;
+  background: #ECEEFE;
+  border-radius: 35px;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 3px 20px 3px 20px;
+  >img {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.channel-name {
+  color: #797EF3;   
+}
+
+.user-status-on-off {
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    width: 14px;
+    height: 14px;
+}

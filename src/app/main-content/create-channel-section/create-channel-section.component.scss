@@ -1,0 +1,63 @@
+@use "./../../../styles.scss" as *;
+
+.create-channel-main-content {
+    height: 100%;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+    font-family: 'nunito';
+}
+
+.create-channel-header {
+     @include dFlex(space-between, center);
+     font-size: 24px;
+     font-weight: 700;
+}
+
+.close-icon {
+    border-radius: 50%;
+}
+
+p {
+    font-size: 18px;
+    font-weight: 400;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+.input-channel-name {
+    box-sizing: border-box;
+    width: 100%;
+    height: 60px;
+    border-radius: 40px;
+    padding-left: 20px;  
+    border: 1px solid #ADB0D9;
+    font-size: 18px;
+    font-weight: 400;
+    color: black;
+}
+
+input::placeholder {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+input:focus {
+    outline: none;
+}
+
+.margin-24 {
+    margin-top: 24px;
+}
+
+.text-optional {
+    color: #837c7c;
+}
+
+.mat-mdc-unelevated-button {
+    width: 204px;
+    height: 49px;
+    background-color: #444DF2 !important; 
+    color: #FFFFFF !important;
+    font-size: 18px;
+    font-weight: 700;
+}

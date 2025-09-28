@@ -1,0 +1,52 @@
+<div class="add-user-to-channel-main-cont">
+    <div>
+        <div class="add-user-header">
+            <p>Leute hinzufügen</p>
+            <mat-icon class="close-icon" (click)="dialog.close()">close</mat-icon>
+        </div>
+        <div class="current-channel-name-headline">
+            # @if (channelService.currentChannelName) {
+                {{ channelService.currentChannelName }}
+            } @else {
+                {{ channelService.userSubcollectionChannelName }}
+            }
+        </div>
+    </div>
+    @if (!showSelectedUser) {
+      <div>
+        <input  
+          [(ngModel)]="searchInput" 
+          [matAutocomplete]="auto" 
+          (input)="filterUsers()" 
+          class="user-name-channel" type="text" 
+          placeholder="Name eingeben">
+        <mat-autocomplete #auto="matAutocomplete" panelClass="user-name-avatar" [displayWith]="displayUser" (optionSelected)="selectUser($event.option.value)">
+          @for (user of filteredUsers; track $index) {
+            <mat-option [value]="user">
+              <div class="user-avatar-name">
+                <div class="user-status">
+                  <img class="user-avatar" src="avatar/{{user.avatar}}">
+                  <img class="user-status-on-off" src="{{ user.active ? userService.onlineUser : userService.offlineUser }}">
+                </div>
+                <span>{{ user.name }}</span> 
+              </div>
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </div>
+    }@else if (showSelectedUser) {
+      <div class="all-selected-user">
+        <div class="selected-user"> 
+          <img class="selected-user-avatar" src="avatar/{{selectedUser.avatar}}"> 
+          <span>{{selectedUser.name}}</span>
+          <mat-icon class="selected-user-remove-icon standard-transition" (click)="removeSelectedUser()">close</mat-icon>
+        </div>
+      </div>     
+    }
+  <div class="btn-add-cont">
+    <button class="btn-add-user standard-transition" 
+      [disabled]="!isEnabled" 
+      [ngClass]="{'btn-enabled': isEnabled, 'btn-disabled': !isEnabled}" 
+      (click)="addUserToChannel()">Hinzufügen</button>
+  </div>
+</div> 

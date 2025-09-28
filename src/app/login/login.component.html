@@ -1,0 +1,71 @@
+<div class="container">
+  <!-- @if (showIntroLogo) {
+  <div class="logo-and-text">
+    <img src="logo/logo.png" alt="logo">
+    <p>DaBubble</p>
+  </div>
+  } -->
+
+  <div class="login-wrapper">
+    <div class="login">
+      <header>
+        <div class="logo-with-text">
+          <img src="logo/logo.png" alt="">
+          <p>DABubble</p>
+        </div>
+        <div class="signup-link">
+          <p>Neu bei DABubble?</p>
+          <a class="standard-transition" routerLink="/signup">Konto erstellen</a>
+        </div>
+      </header>
+
+      <div class="form-position">
+        <h1>Anmeldung</h1>
+        <p>Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit verwendest.</p>
+
+        <form class="form">
+          <input [(ngModel)]="email" 
+                 [ngClass]="{'input-error': loginError}" 
+                 name="email"
+                 class="email-input standard-transition" 
+                 type="email" 
+                 placeholder="beispielname@email.com" 
+                 autocomplete="on"
+                 (keydown)="onEnterKey($event)">
+          <small class="error-message">{{ loginError }}</small>
+          <input [(ngModel)]="password" 
+                 [ngClass]="{'input-error': loginError}" 
+                 name="password"
+                 class="password-input standard-transition" 
+                 type="password" 
+                 placeholder="Passwort" 
+                 autocomplete="on"
+                 (keydown)="onEnterKey($event)">
+        </form>
+
+        <a class="standard-transition" routerLink="/password-send-mail">Passwort vergessen?</a>
+
+        <div class="or-with-border">
+          <div class="border"></div>
+          <p>Oder</p>
+          <div class="border"></div>
+        </div>
+
+        <button class="google-button standard-transition" (click)="loginWithGoogle()">
+          <img src="login/google.png" alt="">Anmelden mit Google
+        </button>
+
+        <div class="login-and-guest-login">
+          <button class="login-button standard-transition" (click)="login()" [disabled]="!isFormValid">Anmelden</button>
+          <button (click)="loginWithGuest()" class="guest-login-button standard-transition">Gäste-Login</button>
+        </div>
+      </div>
+
+      <app-footer-start></app-footer-start>
+    </div>
+
+    <div id="background-overlay" class="standard-transition">
+      <mat-dialog-content>Erfolgreich angemeldet</mat-dialog-content>
+    </div>
+  </div>
+</div>

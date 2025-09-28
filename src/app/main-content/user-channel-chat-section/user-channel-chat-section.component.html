@@ -1,0 +1,36 @@
+<div class="chat-section">
+  <div class="channel-user-content">
+    <button #buttonRef class="channel-btn" (click)="openDialog(buttonRef)">
+      <span>#</span>
+      @if (channelService.currentChannelName) {
+        <p>
+        {{ channelService.currentChannelName }}
+      </p>
+      } @else {
+         <p>
+        {{ channelService.userSubcollectionChannelName }}
+      </p>
+      }
+      <span class="btn-img"></span>
+    </button>
+    <div>Placeholder User Avatar</div>
+  </div>
+  <div></div>
+  <div class="write-message-container">
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <mat-label>Message</mat-label>
+        <input
+          matInput
+          #message
+          maxlength="256"
+          placeholder="Ex. I need help with..."
+        />
+        <mat-hint align="start"
+          ><strong>Don't disclose personal info</strong>
+        </mat-hint>
+        <mat-hint align="end">{{ message.value.length }} / 256</mat-hint>
+      </mat-form-field>
+    </form>
+  </div>
+</div>

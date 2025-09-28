@@ -1,0 +1,150 @@
+<div class="main-content" (click)="pickerService.hide('chat')">
+  <div #chatContainer class="chat-section">
+    <app-header-chat-section></app-header-chat-section>
+
+    <!-- Neue Nachricht Container -->
+    <div class="chat-container" *ngIf="dataUser.showNewMessage">
+      <div #messagesContainer class="chat-messages-container" (scroll)="pickerService.reposition('chat')">
+        <div class="new-message-info">
+          <p>Wähle einen Channel, Benutzer oder Email Adresse in der Suchleiste oben aus, um eine neue Unterhaltung zu beginnen.</p>
+        </div>
+      </div>
+      <app-input-message [mode]="'chats'"></app-input-message>
+    </div>
+
+    <!-- Private Chats -->
+    <ng-container *ngIf="!dataUser.showNewMessage && dataUser.showChatPartnerHeader && (channelService.isChecked$ | async) as selectedUser">
+      <div class="chat-container" [ngClass]="{ 'other-user': selectedUser.userId !== channelService.currentUserId }">
+        <div #messagesContainer class="chat-messages-container" (scroll)="pickerService.reposition('chat')">
+
+          <!-- Stream einmal capturen -->
+          <ng-container *ngIf="chatService.messages$ | async as messages">
+
+            <!-- Empty States -->
+            <div *ngIf="!messages.length && chatService.chatMode === 'chats'" class="user-logo-name-container">
+              <div class="user-logo-big" *ngIf="selectedUser">
+                <img src="avatar/{{selectedUser.avatar}}" alt="">
+              </div>
+              <div class="user-name-container" *ngIf="selectedUser">
+                <h2>
+                  {{selectedUser.name}}
+                  <span *ngIf="selectedUser.userId === channelService.currentUserId">(Du)</span>
+                </h2>
+              </div>
+            </div>
+
+            <div class="chat-info-container" *ngIf="selectedUser.userId === channelService.currentUserId && !messages.length">
+              <p>
+                <strong>Dieser Raum ist nur für dich da.</strong>
+                Mache dir Notizen, liste deine To-dos auf oder bewahre Links und Dateien griffbereit auf.
+              </p>
+            </div>
+
+            <div class="chat-info-container">
+              <p class="standard-transition"
+                 *ngIf="selectedUser.userId !== channelService.currentUserId && !messages.length && chatService.chatMode === 'chats'">
+                Diese Unterhaltung findet nur zwischen
+                <span (click)="openUserDialog()">&#64;{{selectedUser.name}}</span> und dir statt
+              </p>
+            </div>
+
+            <!-- Nachrichtenliste -->
+            <div *ngFor="let msg of messages; let i = index; trackBy: trackById">
+              <div *ngIf="chatService.isFirstMessageOfDay(msg.timestamp, i, messages)">
+                <div class="date-divider">
+                  <span class="date-label">{{ chatService.getDateLabel(msg.timestamp, i, messages) }}</span>
+                </div>
+              </div>
+
+              <div class="sent-message">
+                <app-sent-message
+                  *ngIf="msg.senderId === channelService.currentUserId"
+                  [mode]="'chats'"
+                  [message]="msg"
+                  [index]="i"
+                  (emojiPickerRequested)="openEmojiPicker($event)">
+                </app-sent-message>
+              </div>
+
+              <app-received-message
+                *ngIf="msg.senderId !== channelService.currentUserId"
+                [mode]="'chats'"
+                [message]="msg"
+                (emojiPickerRequested)="openEmojiPicker($event)">
+              </app-received-message>
+            </div>
+
+          </ng-container>
+        </div>
+
+        <app-input-message [mode]="'chats'"></app-input-message>
+      </div>
+    </ng-container>
+
+    <!-- Channel Chats -->
+    <ng-container *ngIf="!dataUser.showNewMessage && dataUser.showChannel">
+      <div class="chat-container">
+        <div #messagesContainer class="chat-messages-container" (scroll)="pickerService.reposition('chat')">
+
+          <ng-container *ngIf="chatService.messages$ | async as messages">
+            <!-- Empty State Channel -->
+            <div *ngIf="!messages.length" class="user-logo-name-container">
+              <div class="channel-text">
+                <span>#</span>
+                <span>{{ channelService.currentChannelName }}</span>
+              </div>
+            </div>
+
+            <div class="chat-info-container">
+              <p class="channel-info-text"
+                 *ngIf="channelService.currentUserId && !messages.length && chatService.chatMode === 'channels'">
+                {{channelService.channelCreaterName}} hat diesen Channel {{channelService.channelCreatedAtFormatted}} erstellt.
+                Das ist der Anfang des Channels
+                <span #channelNameBtn (click)="openDialog(channelNameBtn)">#{{channelService.currentChannelName}}</span>
+              </p>
+            </div>
+
+            <!-- Nachrichtenliste Channel -->
+            <div *ngFor="let msg of messages; let i = index; trackBy: trackById">
+              <div *ngIf="chatService.isFirstMessageOfDay(msg.timestamp, i, messages)">
+                <div class="date-divider">
+                  <span class="date-label">{{ chatService.getDateLabel(msg.timestamp, i, messages) }}</span>
+                </div>
+              </div>
+
+              <div class="sent-message">
+                <app-sent-message
+                  *ngIf="msg.senderId === channelService.currentUserId"
+                  [mode]="'channels'"
+                  [message]="msg"
+                  [index]="i"
+                  (emojiPickerRequested)="openEmojiPicker($event)">
+                </app-sent-message>
+              </div>
+
+              <app-received-message
+                *ngIf="msg.senderId !== channelService.currentUserId"
+                [mode]="'channels'"
+                [message]="msg"
+                (emojiPickerRequested)="openEmojiPicker($event)">
+              </app-received-message>
+            </div>
+
+          </ng-container>
+        </div>
+
+        <!-- WICHTIG: im Channel-Block 'channels' übergeben -->
+        <app-input-message [mode]="'chats'"></app-input-message>
+      </div>
+    </ng-container>
+
+    <!-- Emoji-Picker -->
+    <div #emojiPickerChat
+         class="emoji-mart-container"
+         [style.display]="pickerService.state.chat.visible ? 'block' : 'none'"
+         [ngStyle]="{ top: pickerService.state.chat.top + 'px', left: pickerService.state.chat.left + 'px' }"
+         (click)="$event.stopPropagation()">
+      <emoji-mart (emojiClick)="addEmoji($event)"></emoji-mart>
+    </div>
+  </div>
+</div>

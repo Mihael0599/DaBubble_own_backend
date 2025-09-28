@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="signup-wrapper">
+    <div class="signup">
+      <app-header-start></app-header-start>
+
+      <div class="form-position">
+        <img class="arrow-back standard-transition"
+          routerLink="/" src="signup/arrow-back.png" alt="arrow back">
+
+        <h1>Konto erstellen</h1>
+        <p>Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</p>
+
+        <form class="form">
+          <div class="name-field">
+            <input [(ngModel)]="user.name" 
+                   [ngClass]="{'input-error': showNameError}"
+                   name="name" 
+                   class="name-input standard-transition" 
+                   type="text"
+                   placeholder="Name und Nachname" 
+                   autocomplete="on"
+                   (blur)="markNameTouched()"
+                   (input)="markNameTouched()">
+            @if(showNameError) {
+            <div class="error-message">
+              Bitte geben Sie Ihren Namen ein
+            </div>
+            }
+          </div>
+
+          <div class="email-field">
+            <input [(ngModel)]="user.email" 
+                   [ngClass]="{'input-error': showEmailError}"
+                   name="email" 
+                   class="email-input standard-transition" 
+                   type="email"
+                   placeholder="beispielname@email.com" 
+                   autocomplete="on" 
+                   (blur)="markEmailTouched()"
+                   (input)="markEmailTouched()">
+            @if(showEmailError) {
+            <div class="error-message">
+              Bitte geben Sie eine gültige E-Mail-Adresse ein
+            </div>
+            }
+          </div>
+
+          <div class="password-field">
+            <input [(ngModel)]="user.password" 
+                   [ngClass]="{'input-error': showPasswordError}"
+                   name="password" 
+                   class="password-input standard-transition" 
+                   type="password"
+                   placeholder="Passwort" 
+                   autocomplete="on"
+                   (blur)="markPasswordTouched()"
+                   (input)="markPasswordTouched()">
+            @if(showPasswordError) {
+            <div class="error-message">
+              {{ passwordErrorMessage }}
+            </div>
+            }
+          </div>
+        </form>
+
+        <div class="policy-text">
+          <div class="checkbox-container" (click)="togglePolicy()">
+            <img class="checkbox-img" [src]="getCheckboxImage()" alt="checkbox">
+          </div>
+          <p>Ich stimme der<a routerLink="/privacy-policy" class="policy">Datenschutzerklärung</a>zu.</p>
+          @if(showPolicyError) {
+            <div class="error-message">
+              Bitte akzeptieren Sie die Datenschutzerklärung
+            </div>
+          }
+        </div>
+
+        <div class="forward-button-postition">
+          <button (click)="navigateToAvatar()" class="forward-button standard-transition"
+            [disabled]="!isFormValid">Weiter</button>
+        </div>
+      </div>
+
+      <app-footer-start></app-footer-start>
+    </div>
+  </div>
+</div>

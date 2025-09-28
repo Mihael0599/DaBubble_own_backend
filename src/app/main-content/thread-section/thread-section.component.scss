@@ -1,0 +1,88 @@
+@use './../../../styles.scss' as *;
+
+.sidenav-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.example-container {
+    height: calc(100vh - 100px);
+    border-radius: 30px;
+    background-color: white;
+    position: relative;
+}
+
+.mat-mdc-icon-button {
+    border-radius: 0;
+}
+
+.open-close-img {
+    rotate: 90deg;
+}
+
+.mat-drawer {
+    background-color: white;
+    width: 100%;
+}
+
+@media (max-width: 1920px) {
+    .mat-drawer {
+        width: 100%;
+        min-width: 350px;
+    }
+}
+
+:host ::ng-deep .mat-drawer-inner-container {
+    overflow-x: hidden !important;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+}
+
+.chat-container {
+    @include dFlex(flex-end, flex-end);
+    flex-direction: column;
+    height: calc(100vh - 380px);
+
+    .thread-messages-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        padding-top: 32px;
+        padding-bottom: 16px;
+        scroll-behavior: smooth;
+    }
+
+    >div:not(.thread-messages-container) {
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+        padding-top: 32px;
+        padding-bottom: 16px;
+    }
+}
+
+mat-icon {
+    color: black;
+}
+
+.close-button {
+    @include dFlex();
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    padding: 5px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #ECEEFE;
+        border-radius: 100px;
+    }
+}
+
+/* @media (max-width: 1370px) {
+    .mat-drawer {
+        width: 100%;
+        min-width: 400px;
+    }
+} */

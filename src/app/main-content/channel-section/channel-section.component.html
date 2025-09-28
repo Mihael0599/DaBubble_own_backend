@@ -1,0 +1,87 @@
+<div class="channel-main-content">
+    <div class="channel-header">
+       <span># @if (channelService.currentChannelName) {
+             {{ channelService.currentChannelName }}
+        } @else {
+            {{ channelService.userSubcollectionChannelName }}
+        } </span>
+        <div class="close-icon">
+            <mat-icon (click)="dialogRef.close()">close</mat-icon>
+        </div>
+    </div>
+    <mat-card *ngIf="!showEditChannelName" class="channel-headline mat-card-class">
+        <div class="channel-name-description-edit">
+            <span class="channel-name">Channel - Name</span>
+            <span (click)="editChannelName()" class="channel-edit standard-transition">
+                <mat-icon class="desktop edit">edit</mat-icon>
+                <p class="mobile">Bearbeiten</p> 
+            </span>
+        </div>
+            <div class="created-channel"># @if (channelService.currentChannelName) {
+                {{ channelService.currentChannelName }}
+                } @else {
+                    {{ channelService.userSubcollectionChannelName }}
+                } </div>
+    </mat-card>
+    <div *ngIf="showEditChannelName" class="edit-channel-name">
+        <div class="channel-name-description-edit">
+            <span class="channel-name">Channel - Name</span>
+            <span (click)="saveEditedChannelName()" class="channel-edit standard-transition">Speichern</span>
+        </div>
+        <input class="input-edit" type="text" 
+            [(ngModel)]="newChannel.channelname">
+    </div>
+    <mat-card *ngIf="!showEditChannelDescription" class="channel-description mat-card-class">
+        <div class="channel-name-description-edit">
+            <span class="channel-name">Beschreibung</span>
+            <span (click)="editChannelDescription()" class="channel-edit standard-transition">
+                <mat-icon class="desktop edit">edit</mat-icon>
+                <p class="mobile">Bearbeiten</p>
+            </span> 
+        </div>
+        <div class="channel-description-by-user">
+            @if (channelService.currentChannelDescription) {
+                {{ channelService.currentChannelDescription }}
+            } @else {
+                    {{ channelService.userSubcollectionDescription }}
+            }
+        </div>
+        <mat-divider></mat-divider>
+            <span class="channel-name">Erstellt von</span>
+            <span class="channel-user-name" *ngIf="channelService.channelCreaterName"> {{channelService.channelCreaterName}} </span>
+    </mat-card>
+    <div *ngIf="showEditChannelDescription" class="edit-channel-description">
+        <div class="channel-name-description-edit">
+            <span class="channel-name">Beschreibung</span>
+            <span (click)="saveEditedChannelDescription()" class="channel-edit standard-transition">Speichern</span>
+        </div>
+        <input class="input-edit" type="text"    
+            [(ngModel)]="newChannel.description">
+        <mat-divider></mat-divider>
+            <span class="channel-name">Erstellt von</span>
+            <span class="channel-user-name" *ngIf="channelService.channelCreaterName"> {{channelService.channelCreaterName}} </span>
+    </div>
+    <div class="desktop">
+        <mat-card class="show-user-channel">
+        <p class="text-mitglieder">Mitglieder</p>
+         @for (user of dataUser.userAvatarInChannel$ | async; track $index) {
+            <div class="users-avatar-and-name">
+                <div class="user-status">
+                    <img class="avatar" [src]="'avatar/' + user.avatar">
+                    <img class="user-status-on-off" src="{{ user.userActive ? dataUser.onlineUser : dataUser.offlineUser }}">
+                </div>
+                <span class="user-name"> {{user.name}} 
+                    <span *ngIf="user.userId === channelService.currentUserId">(Du)</span>
+                </span>
+            </div>
+            }
+            <div #div class="add-user-to-channel-cont standard-transition" (click)="addUserToChannel(div)">
+                <span class="add-user-to-channel-span"></span>
+            <p>Mitglieder hinzufügen</p>
+        </div>
+    </mat-card>
+    </div>
+    <div class="leave-channel-btn">
+        <button mat-flat-button primary (click)="deleteUserFromChannel()">Channel verlassen</button>
+    </div>
+</div>

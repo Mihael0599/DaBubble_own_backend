@@ -1,0 +1,110 @@
+<header>
+  <div class="logo-container mobile">
+    <img src="logo/logo-with-text.png">
+  </div>
+  <div class="logo-container desktop">
+    @if (!(navigationService.mobileHeaderDevspace$ | async)) {
+      <img src="logo/logo-with-text.png">
+    } @else if ((navigationService.mobileHeaderDevspace$ | async)) {
+      <img class="devspace_logo_text" src="logo/devspace_logo_text.png" (click)="mobileHeader()">
+    }
+  </div>
+  <mat-form-field class="search-container">
+    <input matInput type="text" placeholder="Devspace durchsuchen" [(ngModel)]="searchTerm" (input)="onSearchInput()">
+    <button matSuffix mat-icon-button aria-label="Clear">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+  <div class="user-container" (click)="openDialog('0ms', '0ms')">
+    <div class="d-none-responsive standard-transition">
+      <div>
+        <span class="standard-transition name"> {{channelService.currentUser?.name}} </span>
+      </div>
+      <div class="avatar-container">
+        <img *ngIf="channelService?.currentUser?.avatar" [src]="'/avatar/' + channelService.currentUser?.avatar">
+        <img class="status-img" src="{{ channelService.currentUser?.active ? onlineUser : offlineUser }}" alt="">
+      </div>
+      <div>
+        <mat-icon class="arrow-down">keyboard_arrow_down</mat-icon>
+      </div>
+    </div>
+  </div>
+  <div class="desktop avatar-container">
+        <img *ngIf="channelService?.currentUser?.avatar" [src]="'/avatar/' + channelService.currentUser?.avatar">
+  </div>
+
+  <div class="search-results" *ngIf="showDropdown">
+
+    <div *ngIf="dropdownType === 'channel'" class="dropdown-section">
+      <div class="dropdown-header">
+        <mat-icon>tag</mat-icon>
+        <span>Channels</span>
+      </div>
+      <div *ngFor="let channel of channelResults" class="search-result-item channel-item standard-transition"
+        (click)="selectChannelResult(channel)">
+        <div class="result-icon">
+          <mat-icon>tag</mat-icon>
+        </div>
+        <div class="result-content">
+          <div class="result-name">{{channel.name}}</div>
+          <div class="result-description">{{channel.description}}</div>
+        </div>
+      </div>
+      <div *ngIf="channelResults.length === 0" class="no-results">
+        Keine Channels gefunden
+      </div>
+    </div>
+
+    <div *ngIf="dropdownType === 'user'" class="dropdown-section">
+      <div class="dropdown-header">
+        <mat-icon>person</mat-icon>
+        <span>Personen</span>
+      </div>
+      <div *ngFor="let user of userResults" class="search-result-item user-item standard-transition"
+        (click)="selectUserResult(dropdownType,user)">
+        <div class="result-icon">
+          <div class="avatar-wrapper">
+            <img *ngIf="user.avatar" [src]="'/avatar/' + user.avatar" class="user-avatar" alt="">
+            <div *ngIf="!user.avatar" class="default-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <img class="status-img-search"
+              [src]="user.description === 'Online' ? 'status/online.png' : 'status/offline.png'" alt="">
+          </div>
+        </div>
+        <div class="result-content">
+          <div class="result-name">{{user.name}}</div>
+          <div class="result-email" *ngIf="user.email">{{user.email}}</div>
+        </div>
+      </div>
+      <div *ngIf="userResults.length === 0" class="no-results">
+        Keine Personen gefunden
+      </div>
+    </div>
+
+    <div *ngIf="dropdownType === 'normal'" class="dropdown-section">
+      <div class="dropdown-header">
+        <mat-icon>search</mat-icon>
+        <span>Nachrichten</span>
+      </div>
+      <div *ngFor="let result of searchResults" class="search-result-item message-item standard-transition"
+        (click)="selectMessageResult(result)">
+        <div class="result-icon">
+          <mat-icon>{{ result.isDirectMessage ? 'message' : 'tag' }}</mat-icon>
+        </div>
+        <div class="result-content">
+          <div class="result-name">{{ result.name }}</div>
+          <div class="result-description" *ngIf="result.description">{{ truncateDescription(result.description) }}</div>
+          <div class="result-meta" *ngIf="result.senderName">
+            <span class="timestamp" *ngIf="result.timestamp">{{ result.timestamp?.toDate() | date:'dd.MM.yyyy HH:mm'
+              }}</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="searchResults.length === 0" class="no-results">
+        Keine Nachrichten gefunden
+      </div>
+    </div>
+
+  </div>
+</header>

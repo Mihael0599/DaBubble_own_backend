@@ -1,0 +1,50 @@
+<div class="write-message-container" (click)="hideUserMentionList()">
+    <form class="example-form">
+        <div class="mention-container" *ngIf="showUserList || showChanelList || showEmojis">
+            <div *ngIf="showUserList">
+                <div class="user-chanel-list-container standard-transition" *ngFor="let user of users$ | async; let index = index"
+                    (click)="selecetedUserMention(user, index)">
+                    <div>
+                        <img class="user-logo" src="avatar/{{user.avatar}}" alt="">
+                        <img class="status-img" src="{{ user.active ? onlineUser : offlineUser }}" alt="">
+                    </div>
+                    <div>{{user.name}}</div>
+                </div>
+            </div>
+            <div *ngIf="showChanelList">
+                <div class="user-chanel-list-container standard-transition" *ngFor="let channel of channelService.showChannelByUser$ | async; let index = index"
+                    (click)="selecetedChannelMention(channel, index)">
+                    <div class="channel-row" *ngIf="showChanelList">
+                        <p>#</p>
+                        <span>{{channel.channelname}}</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div *ngIf="showEmojis">
+                    <emoji-mart (emojiClick)="addEmoji($event)"></emoji-mart>
+                </div>
+            </div>
+        </div>
+        <mat-form-field class="example-full-width">
+            <mat-label>Starte eine neue Nachricht</mat-label>
+            <input matInput [(ngModel)]="messageText" (input)="onInputChange()" name="message"
+                (keyup.enter)="sendMessage()">
+            <div class="icons-container standard-transition">
+                <div>
+                    <div class="standard-transition" (click)="showAllEmojis($event)" (mouseover)="imgSrcReaction = 'send-email/add-reaction-color.png'"
+                            (mouseout)="imgSrcReaction = 'send-email/add-reaction.png'">
+                        <img [src]="imgSrcReaction">
+                    </div>
+                    <div class="standard-transition" (click)="userMention($event)" (mouseover)="imgSrcMention = 'send-email/mention-color.png'"
+                            (mouseout)="imgSrcMention = 'send-email/mention.png'">
+                        <img [src]="imgSrcMention">
+                    </div>
+                </div>
+                <div class="send-icon-container" (click)="sendMessage()">
+                    <img src="send-email/send.png">
+                </div>
+            </div>
+        </mat-form-field>
+    </form>
+</div>

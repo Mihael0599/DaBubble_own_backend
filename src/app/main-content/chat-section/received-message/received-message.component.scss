@@ -1,0 +1,204 @@
+@use "./../../../../styles.scss" as *;
+
+
+.messages-container {
+    &:hover {
+        .message-content {
+            background-color: white;
+        }
+    }
+}
+
+.users-message-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    @include dFlex(flex-start);
+    width: 100%;
+    padding-left: 45px;
+    overflow-wrap: anywhere
+}
+
+.user-logo {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+}
+
+.message-info {
+    @include dFlex(center, flex-start);
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message-container {
+    @include dFlex(center, flex-start);
+    gap: 30px;
+}
+
+.user-date-container {
+    @include dFlex(flex-start);
+    gap: 20px;
+
+    >span {
+        font-size: 18px;
+        font-family: 'Nunito';
+        font-weight: 700;
+        color: black;
+    }
+
+    >p {
+        font-size: 14px;
+        font-family: 'Nunito';
+        color: #686868;
+        color: black;
+    }
+}
+
+.message-content {
+    background-color: #ECEEFE;
+    border-bottom-left-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+
+    >h4 {
+        font-family: 'Nunito';
+        font-size: 18px;
+        font-weight: 400;
+        padding: 15px;
+    }
+}
+
+.answer-date-container {
+    @include dFlex(flex-start);
+    flex-wrap: wrap;
+
+    >div {
+        @include dFlex();
+        gap: 20px;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+
+        .last-reply-time {
+            color: #686868;
+            font-size: 14px;
+            font-weight: 400;
+
+            &:hover {
+                cursor: default;
+            }
+        }
+
+        >span {
+            color: #535AF1;
+            font-size: 18px;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        >p {
+            color: #686868;
+            font-size: 14px;
+        }
+    }
+}
+
+.message-hover-options {
+    right: 45px;
+    top: -25px;
+    z-index: 10;
+
+    >div {
+        color: black;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+.message-reaction-container {
+    @include dFlex();
+    flex-direction: row;
+    gap: 5px;
+    transition: transform 0.3s ease;
+    max-width: 750px;
+    flex-wrap: wrap;
+
+    >div {
+        @include dFlex();
+        gap: 5px;
+
+        >div {
+            @include dFlex();
+        }
+    }
+}
+
+
+.reaction-wrapper {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+}
+
+.reaction-container {
+    border: 1px solid #ADB0D9;
+    border-radius: 30px;
+    padding: 5px 10px;
+    gap: 5px;
+
+    >span {
+        font-size: 18px;
+        color: black;
+    }
+
+}
+
+
+.message-reaction-container.shifted {
+    transform: translateX(+5px);
+}
+
+.reaction-user-container {
+    position: absolute;
+    bottom: 100%;
+    right: -250px;
+    transform: translate(-50%, -8px);
+    @include dFlex();
+    flex-direction: column;
+    text-align: center;
+    border-bottom-right-radius: 30px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    background: #444DF2;
+    height: 112px;
+    width: 158px;
+    padding: 8px;
+    z-index: 10;
+
+    >div {
+        color: white;
+
+        >span {
+            font-size: 16px;
+        }
+
+        >h4 {
+            font-size: 18px;
+        }
+
+        >p {
+            font-size: 22px;
+        }
+    }
+}
+
+/* .emoji-mart-container {
+    position: absolute;
+    top: -380px;
+    left: 150px;
+    z-index: 1000;
+} */

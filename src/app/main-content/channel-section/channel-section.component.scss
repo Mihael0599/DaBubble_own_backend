@@ -1,0 +1,168 @@
+@use "./../../../styles.scss" as *;
+
+.channel-main-content {
+    height: 100%;
+    @include dFlex(unset, unset);
+    gap: 12px;
+    flex-direction: column;
+    font-family: 'nunito';
+}
+
+.channel-header {
+    @include dFlex(space-between,center);
+    font-size: 24px;
+    font-weight: 700;
+    cursor: default;
+}
+
+mat-icon {
+    cursor: pointer;
+}
+
+.close-icon {
+    border-radius: 50%;
+}
+
+.mat-card-class {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    @include dFlex(space-between, flex-start);
+    padding: 20px 20px 20px 20px;
+}
+
+.channel-headline {
+    height: 114px;
+}
+
+.channel-name {
+    font-size: 18px;
+    font-weight: 700;
+    cursor: default;
+}
+
+.channel-edit {
+    font-size: 16px;
+    font-weight: 400;
+    color: #535AF1;    
+    cursor: pointer;
+    &:hover {
+        color: #444DF2;;   
+        font-weight: 600;
+        transform: scale(1.02);
+    }
+}
+
+.created-channel {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.channel-description {
+    height: 273px;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+    gap: 12px;
+}
+
+.channel-name-description-edit {
+    width: 100%;
+    @include dFlex(space-between, flex-start);
+    flex-direction: row;
+}
+
+.channel-description-by-user {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.mat-divider {
+    border: 1px solid #ADB0D9;    
+}
+
+.channel-user-name {
+    font-size: 24px;
+    font-weight: 400;
+    color: #535AF1; 
+    cursor: default;
+}
+
+.mat-mdc-unelevated-button {
+    width: 204px;
+    height: 49px;
+    background-color: #444DF2 !important; 
+    color: #FFFFFF !important;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.leave-channel-btn {
+     @include dFlex(end, unset);
+     padding-top: 18px;
+}
+
+.edit-channel-name {
+    height: 105px;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+}
+
+.input-edit {
+    box-sizing: border-box;
+    width: 100%;
+    height: 60px;
+    border-radius: 40px;
+    padding-left: 20px;  
+    border: 1px solid #ADB0D9;
+    font-size: 18px;
+    font-weight: 400;
+    color: black;
+}
+
+input:focus {
+    outline: none;
+}
+
+.edit-channel-description {
+    height: 248px;
+    @include dFlex(space-between, unset);
+    flex-direction: column;
+    gap: 18px;
+}
+
+.show-user-channel {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    @include dFlex(space-between, flex-start);
+    flex-direction: column;
+    padding: 20px 20px 20px 20px;
+}
+
+.users-avatar-and-name {
+    @include dFlex(unset, center);
+    flex-direction: row;
+    gap: 15px;
+    cursor: pointer;
+    padding: 5px 12px 5px 15px;
+    box-sizing: border-box;
+     &:hover {
+        background-color: #ECEEFE;
+        border-radius: 100px;
+        color: #535AF1;
+    }
+}
+
+.user-status-on-off {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    width: 14px;
+    height: 14px;
+}
+
+.text-mitglieder {
+    font-size: 24px;
+    font-weight: 700;
+    padding-bottom: 8px;
+}

@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="avatar-wrapper">
+    <div class="avatar-content">
+      <app-header-start></app-header-start>
+
+      <div class="choose-avatar">
+        <img class="arrow-back standard-transition"
+          (click)="navigateBack()" src="signup/arrow-back.png" alt="arrow back">
+        <h1>Wähle deinen Avatar</h1>
+
+        <div class="img-and-name">
+          <img class="standard-transition" src="{{ selectedAvatar }}" alt="avatar empty" (click)="removeAvatar()">
+          <h2>{{ getUserName() }}</h2>
+        </div>
+
+        <div class="avatar-list-text">
+          <p>Aus der Liste wählen:</p>
+          <div class="avatar-list-imgs">
+            @for (item of items; track $index) {
+            <img class="standard-transition" src="{{ item }}" (click)="selectAvatar(item)"
+              [class.selected]="selectedAvatar === item" alt="avatar">
+            }
+          </div>
+        </div>
+
+        <div class="forward-button-postition">
+          <button (click)="showSuccessfullyCreateContactOverlay()" class="forward-button standard-transition"
+            [disabled]="selectedAvatar === '/avatar/empty-avatar.png'">Weiter</button>
+        </div>
+      </div>
+
+      <app-footer-start></app-footer-start>
+    </div>
+
+    <div id="background-overlay" class="standard-transition">
+      <mat-dialog-content>Konto erfolgreich erstellt!</mat-dialog-content>
+    </div>
+  </div>
+</div>

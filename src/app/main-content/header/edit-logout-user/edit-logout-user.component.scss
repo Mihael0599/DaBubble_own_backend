@@ -1,0 +1,37 @@
+@use '../../../../styles.scss' as *;
+
+mat-dialog-actions {
+    @include dFlex();
+    flex-direction: column;
+    gap: 25px;
+    padding: 30px;
+    border-top-right-radius: unset;
+    background-color: white;
+
+    >button {
+        border: unset;
+        background-color: unset;
+        font-size: 24px;
+        font-family: 'Nunito';
+        font-weight: 600;
+        width: 100%;
+        height: 53px;
+        border-radius: 30px;
+
+        &:hover {
+            background-color: #ECEEFE;
+            color: #535AF1;
+        }
+    }
+}
+
+::ng-deep.mat-mdc-dialog-surface {
+    border-top-right-radius: unset;
+    box-shadow: 0px 6px 10px 0px #00000033;
+    position: absolute;
+    top: 110px;
+    right: 30px;
+    background-color: unset;
+    height: unset;
+    width: unset;
+}

@@ -1,0 +1,60 @@
+<div class="header-container">
+  <p>{{ userUpdateNameAktiv ? 'Dein Profil bearbeiten' : 'Profil' }}</p>
+  <button class="close-icon" (click)="closeDialog()"><mat-icon>close_small</mat-icon></button>
+</div>
+<div class="user-avatar">
+  <img class="avatar-img" [src]="userUpdateNameAktiv ? selectedAvatar : 'avatar/' + data.user.avatar" alt="">
+</div>
+<div [ngClass]="userUpdateNameAktiv ? 'active' : 'notactive'">
+  <div class="user-name-online-container">
+    <div class="user-name standard-transition">
+      <h3>{{data.user.name}}</h3>
+      <span *ngIf="isCurrentUser()" (click)="changeName()">Bearbeiten</span>
+    </div>
+    <div [ngClass]="data.user.active ? 'online' : 'offline'">
+      <mat-icon>fiber_manual_record</mat-icon>
+      <p>{{data.user.active ? 'Online' : 'Offline'}}</p>
+    </div>
+  </div>
+  <div class="email-container">
+    <div>
+      <mat-icon>mail_outline</mat-icon>
+      <p>E-Mail-Adresse</p>
+    </div>
+    <div class="email-adress">
+      <a href="mailto:{{data.user.email}}">{{data.user.email}}</a>
+    </div>
+  </div>
+  <div class="button-container" *ngIf="!isCurrentUser()">
+    <button class="standard-transition" (click)="selectUserResult('chats', data.user)"><mat-icon>chat_bubble_outline</mat-icon>Nachricht</button>
+  </div>
+</div>
+<div [ngClass]="!userUpdateNameAktiv ? 'active' : 'user-change-name-container'">
+
+  <div class="avatar-list-text">
+    <p>Aus der Liste wählen:</p>
+    <div class="avatar-list-imgs">
+      @for (item of items; track $index) {
+      <img class="standard-transition" src="{{ item }}" (click)="selectAvatar(item)"
+        [class.selected]="selectedAvatar === item" alt="avatar">
+      }
+    </div>
+  </div>
+
+  <div class="input-container">
+    <div class="input-title">
+      <img src="work-space/account-circle.png" alt="">
+      <h2>Vollständiger Name</h2>
+    </div>
+    <div>
+      <input [(ngModel)]="newName" placeholder={{data.user.name}}>
+    </div>
+  </div>
+
+  <div>
+    <div class="buttons-container">
+      <button class="discard-btn standard-transition" (click)="discardChangeName()">Abbrechen</button>
+      <button class="save-btn standard-transition" (click)="updateName()">Speichern</button>
+    </div>
+  </div>
+</div>

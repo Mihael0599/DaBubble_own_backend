@@ -1,0 +1,119 @@
+@use './../../../../styles.scss' as *;
+
+.add-user-to-channel-main-cont {
+    padding: 40px;
+    height: 100%;
+    @include dFlex(space-between, unset);
+    flex-direction: column
+}
+
+.current-channel-name-headline {
+    margin-top: 5px;
+    font-size: 18px;
+    font-weight: 400;
+    color: #797EF3; 
+}
+
+.close-icon {
+    &:hover {
+        color: #535AF1;
+    }
+}
+
+.user-name-channel {
+    width: 434px;
+    height: 55px;
+    border: 1px solid #ADB0D9; 
+    border-radius: 30px;
+    padding: 15px 20px 15px 20px;
+    box-sizing: border-box;
+    font-size: 18px;
+    font-weight: 400;
+    &::placeholder {
+        font-size: 18px;
+        font-weight: 400;
+        color: #686868;  
+    }
+    &:focus {
+    border: 1px solid #ADB0D9; 
+    outline: none;                      
+  }
+}
+
+.btn-add-cont {
+    @include dFlex(end, center);
+}
+
+.mat-mdc-unelevated-button {   
+    background-color: #686868 !important;
+    font-weight: 700 !important;
+    color: white !important;
+}
+
+.all-selected-user {  
+    width: 434px;
+    height: 55px;
+    @include dFlex(flex-start, center);
+    flex-direction: row;
+    border: 1px solid #ADB0D9;
+    border-radius: 30px;
+    padding: 7.5px 8px 7.5px 8px;
+    box-sizing: border-box;
+}
+
+.selected-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
+.selected-user {
+    @include dFlex(flex-start, center);
+    flex-direction: row;
+    gap: 8px;
+    background: #ECEEFE;
+    border-radius: 35px;
+    box-sizing: border-box;
+    padding: 3px 6px 3px 6px;
+}
+
+.selected-user-remove-icon {
+    border-radius: 100%;
+    padding: 4px;
+
+    &:hover {
+        background-color: white;
+        color: #535AF1;
+    }
+}
+
+.btn-add-user,
+.btn-enabled {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    width: 147px;
+    height: 49px;
+    padding: 12px 25px 12px 25px;
+    border-radius: 25px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #797EF3;
+    }
+}
+
+.btn-disabled {
+    &:hover {
+        cursor: not-allowed;
+        background-color: #686868;
+    }
+}
+
+.user-status-on-off {
+    position: absolute;
+    top: 40px;
+    left: 35px;
+    width: 14px;
+    height: 14px;
+}

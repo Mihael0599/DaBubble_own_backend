@@ -1,0 +1,60 @@
+@use './../../styles.scss' as *;
+
+.chat-section{
+    @include dFlex(flex-start);
+    flex-direction: column;
+    /* max-width: 1920px; */
+    gap: 12px;
+    background-color: #ECEEFE;
+}
+
+.main-content-chat-header {
+    height: 100vh;
+    width: 100%;
+    max-width: 1920px;
+    @include dFlex(unset, unset);
+    flex-direction: column;
+}
+
+.header {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    @include dFlex();
+}
+
+.work-space-section {
+    padding-left: 20px;
+    padding-right: 20px;
+    flex: 0 1 clamp(100px, 24vw, 400px);
+    min-width: 300px;
+    height: 100%;
+}
+
+.main-content {
+    width: 100vw;
+    max-width: 1920px;
+    min-width: 0;
+    position: relative;
+    @include dFlex(center, flex-start);
+}
+
+@media(max-width: 1000px) {
+    .chat-section {
+        display: none;
+    }
+    .thread-section {
+        display: none;
+    }
+    .main-content {
+        background-color: white;
+        overflow: hidden;
+    }
+    .work-space-section {
+    padding-left: 0;
+    padding-right: 0;
+    }
+    .main-content {
+    display: unset;
+}
+}

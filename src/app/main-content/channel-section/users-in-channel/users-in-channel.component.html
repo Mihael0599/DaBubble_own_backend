@@ -1,0 +1,23 @@
+<div class="users-in-channel-main-cont">
+    <div class="add-user-header">
+        <p>Mitglieder</p>
+        <mat-icon class="close-icon" (click)="dialog.close()">close</mat-icon>
+    </div>
+    <div class="users-in-channel">
+        @for (user of dataUser.userAvatarInChannel$ | async; track $index) {
+            <div class="users-avatar-and-name" (click)="openUserDialog(user)">
+                <div class="user-status">
+                    <img class="avatar" [src]="'avatar/' + user.avatar">
+                    <img class="user-status-on-off" src="{{ user.userActive ? dataUser.onlineUser : dataUser.offlineUser }}">
+                </div>
+                <span class="user-name"> {{user.name}} 
+                    <span *ngIf="user.userId === channelService.currentUserId">(Du)</span>
+                </span>
+            </div>
+            }
+    </div>
+    <div #div class="add-user-to-channel-cont standard-transition" (click)="addUserToChannel(div)">
+            <span class="add-user-to-channel-span"></span>
+            <p>Mitglieder hinzufügen</p>
+    </div>
+</div>

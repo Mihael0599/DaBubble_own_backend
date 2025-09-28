@@ -1,0 +1,163 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(236, 238, 254, 1);
+
+  .privacy-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .privacy-content-width {
+    width: 100%;
+    max-width: 1920px !important;
+    height: 100%;
+  }
+
+  .privacy-card {
+    position: absolute;
+    width: 30vw;
+    height: 60vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 32px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.08);
+    border-radius: 30px;
+    z-index: 5;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .privacy-scroll-content {
+      overflow-y: auto;
+      width: 100%;
+      border-radius: 12px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    h1 {
+      text-align: center;
+      width: 100%;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 46px;
+      font-weight: 700;
+      color: rgba(68, 77, 242, 1);
+    }
+
+    h2,
+    h3,
+    h4 {
+      font-size: 16px;
+      font-weight: bold;
+      color: rgba(68, 77, 242, 1);
+    }
+
+    .arrow-back {
+      position: absolute;
+      left: 5%;
+      top: 7%;
+      width: 24px;
+      height: 24px;
+      border-radius: 100%;
+      padding: 8px;
+      background-color: rgba(255, 255, 255, 1);
+
+      &:hover {
+        content: url(../../assets/signup/arrow-back-hover.png);
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        background-color: rgba(236, 238, 254, 1);
+        border-radius: 100%;
+      }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .privacy-card {
+      width: 50vw !important;
+      min-width: 500px !important;
+    }
+
+    .privacy-content-width {
+      width: 100vw !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .privacy-card {
+      width: 70vw !important;
+      min-width: 400px !important;
+
+      h1 {
+        font-size: 36px !important;
+      }
+
+      p,
+      li {
+        font-size: 18px !important;
+      }
+    }
+  }
+
+  @media (max-width: 700px) {
+    .privacy-card {
+      min-width: 300px !important;
+
+      h1 {
+        font-size: 36px !important;
+      }
+    }
+  }
+
+  @media (max-width: 500px) {
+    .privacy-card {
+      width: calc(100vw - 64px) !important;
+      min-width: auto;
+      padding: 12px !important;
+
+      p,
+      li {
+        font-size: 14px !important;
+      }
+
+      .arrow-back {
+        top: 3% !important;
+        left: 3% !important;
+      }
+    }
+  }
+
+  @media (max-width: 370px) {
+    .privacy-card {
+      h1 {
+        font-size: 24px !important;
+      }
+
+      p,
+      li {
+        font-size: 12px !important;
+      }
+
+      .arrow-back {
+        top: 2% !important;
+        left: 3% !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
+
+      .privacy-scroll-content {
+        border-radius: 24px;
+      }
+    }
+  }
+}

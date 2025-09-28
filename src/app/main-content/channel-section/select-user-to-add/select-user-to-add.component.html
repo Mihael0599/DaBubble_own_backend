@@ -1,0 +1,64 @@
+<div class="select-user-main-cont">
+    <div class="add-user-header marg-bot">
+        <p>Leute hinzufügen</p>
+            <mat-icon class="close-icon" (click)="dialog.close()">close</mat-icon>
+    </div>
+    <div class="selector">
+        <mat-radio-group aria-label="Select an option"  [(ngModel)]="selectAllUsersInChannel" (change)="checkboxValue()">
+            <mat-radio-button [value]="true">Alle Mitglieder von 
+                <span class="channel-name">
+                    @if (channelService.currentChannelName) {
+                        {{channelService.currentChannelName}}
+                    } @else {
+                        {{channelService.userSubcollectionChannelName}}
+                    }</span>  
+            </mat-radio-button>
+            <mat-radio-button [value]="false">Bestimmte leute hinzufügen</mat-radio-button>
+        </mat-radio-group>
+    </div>
+    @if (showUserSearchBar) {
+        @if (!showSelectedUser) {
+            <div class="search-user-cont">
+                <input 
+                    type="text" 
+                    #searchUserInput
+                    class="search-user"
+                    (input)="showfilterUsers()"
+                    [(ngModel)]="searchInput"
+                    [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" panelClass="user-name-avatar" [displayWith]="displayUser" (optionSelected)="selectUser($event.option.value)">
+                @for (user of filteredUsers; track $index) {
+                    <mat-option [value]="user">
+                        <div class="user-avatar-name">
+                            <div class="user-status">
+                                <img class="user-avatar" src="avatar/{{user.avatar}}">
+                                <img class="user-status-on-off" src="{{ user.active ? userService.onlineUser : userService.offlineUser }}">
+                            </div>
+                            <span>{{ user.name }}</span> 
+                        </div>
+                    </mat-option>
+                    }
+                    </mat-autocomplete>
+                </div>
+            }
+         @else if (showSelectedUser) {
+            <div class="selected-users-cont" (click)="showSearchBar()">
+                @for (user of selectedUsers; track $index) {
+                    <div class="selected-users">
+                        <img class="user-avatar" src="avatar/{{user.avatar}}">
+                        <span>{{ user.name }}</span>
+                        <mat-icon class="selected-user-remove-icon" (click)="removeSelectedUser(user.userId, $event); $event.stopPropagation()">close</mat-icon>
+                    </div>
+                    }
+            </div>
+        }}
+    <div class="create-channel-btn-cont">
+        <button 
+            class="create-channel-btn"
+            [disabled]="!isEnabled" 
+            [ngClass]="{'btn-enabled': isEnabled, 'btn-disabled': !isEnabled}"
+            (click)="createChannel()">
+            Erstellen
+        </button>
+    </div>
+</div>

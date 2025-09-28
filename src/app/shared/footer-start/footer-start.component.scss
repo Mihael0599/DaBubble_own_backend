@@ -1,0 +1,29 @@
+footer {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  z-index: 5;
+  width: 100vw;
+
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+
+  a {
+    border: 1px solid rgba(236, 238, 254, 1);
+    border-radius: 30px;
+    color: rgba(121, 126, 243, 1);
+    padding: 8px;
+
+    &:hover {
+      border: 1px solid rgba(173, 176, 217, 1);
+      border-radius: 30px;
+    }
+  }
+}
+
+@media (max-height: 800px) {
+  footer {
+    bottom: 24px;
+  }
+}

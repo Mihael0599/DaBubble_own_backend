@@ -1,0 +1,181 @@
+@use "./../../../styles.scss" as *;
+
+.chat-section {
+    width: calc(100vw - 445px);
+    max-width: 1920px;
+    margin-right: 20px;
+    flex: 1 1 0%;
+    min-width: 0;
+    height: calc(100vh - 100px);
+    background-color: white;
+    border-radius: 30px;
+    @include dFlex(space-between, flex-start);
+    flex-direction: column;
+    --mat-sys-primary: #686868;
+    position: relative;
+}
+
+.thread-section {
+    display: flex;
+    padding-right: 20px;
+    flex: 0 1 clamp(240px, 26vw, 500px);
+    min-width: 350px;
+}
+
+.chat-container {
+    width: 100%;
+    height: calc(100vh - 205px);
+    @include dFlex(flex-end);
+    align-items: unset;
+    flex-direction: column;
+
+    .chat-messages-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 32px;
+        padding-bottom: 16px;
+        scroll-behavior: smooth;
+        position: relative;
+    }
+
+    >div:not(.chat-messages-container) {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 32px;
+        padding-bottom: 16px;
+    }
+}
+
+.user-logo-name-container {
+    @include dFlex(flex-start, flex-end);
+    gap: 25px;
+    padding-left: 30px;
+    padding-bottom: 25px;
+}
+
+.user-name-container {
+    @include dFlex();
+
+    >span {
+        font-family: 'Nunito';
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    h2 {
+        font-family: 'Nunito';
+        font-size: 24px;
+    }
+}
+
+.user-logo-big {
+    >img {
+        height: 100px;
+        width: 100px;
+        border-radius: 100px;
+    }
+}
+
+.chat-info-container,
+.new-message-info {
+    padding-left: 30px;
+    transition: all 125ms ease-in-out;
+
+    >p {
+        margin: 0;
+        font-size: 20px;
+        color: #686868;
+
+        >span {
+            font-family: 'Nunito';
+            font-size: 20px;
+            color: #535AF1;
+            font-weight: 400;
+            cursor: pointer;
+
+            &:hover {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+.chat-card {
+    width: 100%;
+    @include dFlex();
+    flex-direction: column;
+}
+
+.sent-message-component {
+    width: 100%;
+    @include dFlex();
+    flex-direction: column;
+}
+
+.emoji {
+    height: 24px;
+    width: 24px;
+}
+
+.sent-message {
+    position: relative;
+}
+
+.emoji-container {
+    position: absolute;
+    top: -160px;
+    /* left: 430px; */
+}
+
+app-input-message {
+    width: 100%;
+    @include dFlex();
+}
+
+app-header-chat-section {
+    width: 100%;
+}
+
+::ng-deep .highlighted-message {
+    background-color: rgba(68, 77, 242, 0.1) !important;
+    transition: all 0.3s ease-in-out;
+    animation: pulseHighlight 0.8s ease-in-out;
+
+    h4 {
+        background-color: white !important;
+        border-radius: 30px;
+    }
+}
+
+@keyframes pulseHighlight {
+    0% {
+        background-color: rgba(68, 77, 242, 0.3);
+    }
+
+    50% {
+        background-color: rgba(68, 77, 242, 0.2);
+    }
+
+    100% {
+        background-color: rgba(68, 77, 242, 0.1);
+    }
+}
+
+.channel-text {
+    @include dFlex();
+    gap: 10px;
+    >span {
+        font-size: 24px;
+        font-weight: 700;
+    }
+}
+.channel-info-text{
+    color: black !important;
+}
+
+@media(max-width: 1000px) {
+    .chat-section {
+        width: 100%;
+        margin-right: 0;
+    }
+}

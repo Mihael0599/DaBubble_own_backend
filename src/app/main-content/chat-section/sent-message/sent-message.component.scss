@@ -1,0 +1,353 @@
+@use "./../../../../styles.scss" as *;
+
+.users-message-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    @include dFlex(flex-end);
+    width: 100%;
+    padding-right: 45px;
+    overflow-wrap: anywhere;
+}
+
+.user-logo {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+}
+
+.message-info {
+    @include dFlex(center, flex-end);
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 50px
+}
+
+.message-container {
+    @include dFlex(center, flex-start);
+    flex-direction: row-reverse;
+    gap: 30px;
+}
+
+.user-date-container {
+    @include dFlex(flex-start);
+    gap: 20px;
+
+    >span {
+        font-size: 18px;
+        font-family: 'Nunito';
+        font-weight: 700;
+        color: black;
+    }
+
+    >p {
+        font-size: 14px;
+        font-family: 'Nunito';
+        color: #686868;
+    }
+}
+
+.answer-date-container {
+    @include dFlex(flex-start);
+    flex-wrap: wrap;
+
+    >div {
+        @include dFlex();
+        flex-wrap: wrap;
+        gap: 20px;
+
+        .last-reply-time {
+            color: #686868;
+            font-size: 14px;
+            font-weight: 400;
+
+            &:hover {
+                cursor: default;
+            }
+        }
+
+        >span {
+            color: #535AF1;
+            font-size: 18px;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        >p {
+            color: #686868;
+            font-size: 14px;
+        }
+    }
+}
+
+.message-hover-options {
+    left: 45px;
+    top: -25px;
+    z-index: 1;
+
+    >div {
+        color: black;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
+
+.custom-menu-trigger {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-menu-dropdown {
+    position: absolute;
+    top: 39px;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ADB0D9;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 8px;
+    width: 313px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 5px;
+}
+
+.custom-menu-item {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    background: none;
+    text-align: center;
+    color: black;
+    font-size: 20px;
+    font-family: 'Nunito';
+    cursor: pointer;
+    border-radius: 100px;
+    
+    &:hover {
+        background-color: #ECEEFE;
+        font-weight: 700;
+        color: #535AF1;
+    }
+}
+
+::ng-deep .mat-mdc-menu-panel {
+    background-color: white !important;
+    border-bottom-left-radius: 30px !important;
+    border-bottom-right-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+    padding: 0px 20px !important;
+    width: 313px !important;
+    max-width: unset !important;
+
+    >button {
+        >span {
+            color: black !important;
+        }
+    }
+}
+
+::ng-deep .mat-mdc-menu-item {
+    padding: 10px 20px !important;
+
+    >span {
+        text-align: center;
+        color: black !important;
+        font-size: 24px !important;
+        font-family: 'Nunito' !important;
+    }
+
+    &:hover {
+        background-color: #ECEEFE !important;
+        border-radius: 100px;
+
+        >span {
+            font-weight: 700 !important;
+            color: #535AF1 !important;
+        }
+    }
+}
+
+::ng-deep .example-full-width .mat-mdc-text-field-wrapper {
+    height: unset !important;
+}
+
+.mat-mdc-form-field-infix {
+    width: unset;
+}
+
+.editMessageActive {
+    background-color: unset;
+}
+
+.message-content {
+    cursor: default;
+    >mat-form-field {
+        width: calc(50vw - 100px) !important;
+    }
+}
+
+.edit-textarea {
+    color: black !important;
+}
+
+.buttons-container {
+    @include dFlex(space-around !important);
+    gap: 16px;
+
+    >div {
+        >button {
+            padding: 12px 25px;
+            font-size: 18px;
+        }
+    }
+
+    .discard-btn-container {
+        height: unset;
+        width: unset;
+
+        >button {
+            border: 1px solid #797EF3;
+            background-color: unset;
+            border-radius: 50px;
+            color: #444DF2;
+
+            &:hover {
+                background-color: #444DF2;
+                color: white;
+            }
+        }
+    }
+
+    .save-btn-container {
+        height: unset;
+        width: unset;
+
+        >button {
+            color: white;
+            border: 1px solid #797EF3;
+            background-color: #444DF2;
+            border-radius: 50px;
+
+            &:hover {
+                background-color: #797EF3;
+                color: white;
+            }
+        }
+    }
+}
+
+input {
+    color: #686868 !important;
+}
+
+.message-reaction-container {
+    @include dFlex();
+    flex-direction: row;
+    gap: 5px;
+    transition: transform 0.3s ease;
+    max-width: 750px;
+    padding-left: 40px;
+    flex-wrap: wrap;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    >div {
+        @include dFlex();
+        gap: 5px;
+
+        >div {
+            @include dFlex();
+        }
+    }
+}
+
+
+.reaction-wrapper {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+}
+
+.reaction-container {
+    border: 1px solid #ADB0D9;
+    border-radius: 30px;
+    padding: 5px 10px;
+    gap: 5px;
+
+    >span {
+        font-size: 18px;
+        color: black;
+    }
+
+    >p {
+        color: black;
+    }
+
+}
+
+
+.message-reaction-container.shifted {
+    transform: translateX(+5px);
+}
+
+.reaction-user-container {
+    position: absolute;
+    bottom: 100%;
+    right: -250px;
+    transform: translate(-50%, -8px);
+    @include dFlex();
+    flex-direction: column;
+    text-align: center;
+    border-bottom-right-radius: 30px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    background: #444DF2;
+    height: 112px;
+    width: 158px;
+    padding: 8px;
+    z-index: 10;
+
+    >div {
+        color: white;
+
+        >span {
+            font-size: 16px;
+        }
+
+        >h3 {
+            font-size: 18px;
+        }
+
+        >p {
+            font-size: 22px;
+        }
+    }
+}
+
+.emoji-mart-container-input {
+    position: absolute;
+    top: -190px;
+    z-index: 100;
+    right: 140px;
+}
+
+
+@media (max-width: 1280px) {
+    .answer-date-container {
+        >div {
+            justify-content: center;
+            flex-direction: column-reverse;
+            gap: 5px;
+        }
+    }
+
+}
