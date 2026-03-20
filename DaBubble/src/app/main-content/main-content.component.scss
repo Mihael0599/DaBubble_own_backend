@@ -1,0 +1,82 @@
+@use './../../styles.scss' as *;
+
+.chat-section {
+    @include dFlex(flex-start);
+    flex-direction: column;
+    gap: 12px;
+    background-color: #ECEEFE;
+    flex: 1;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.main-content-chat-header {
+    height: 100vh;
+    width: 100%;
+    max-width: 1920px;
+    @include dFlex(unset, unset);
+    flex-direction: column;
+}
+
+.header {
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    @include dFlex();
+}
+
+.work-space-section {
+    padding-left: 20px;
+}
+
+.thread-section {
+    padding-right: 20px;
+}
+
+.main-content {
+    width: 100vw;
+    max-width: 1920px;
+    min-width: 0;
+    position: relative;
+    @include dFlex(flex-start, flex-start);
+}
+
+@media (max-width: 1050px) {
+    .thread-section {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .work-space-section {
+        padding-left: 10px;
+    }
+    .chat-section{
+        padding-left: 10px;
+        padding-right: 0px;
+    }
+}
+
+    @media(max-width: 1000px) {
+        .chat-section {
+            // display: none;
+            padding-left: 0;
+        }
+
+        // .thread-section {
+        //     display: none;
+        // }
+
+        .main-content {
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .work-space-section {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .main-content {
+            display: unset;
+        }
+    }

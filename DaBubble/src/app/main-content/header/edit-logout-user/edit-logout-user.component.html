@@ -1,0 +1,19 @@
+<mat-dialog-actions>
+  <div class="rect-cont">
+        <span class="rect"></span>
+  </div>
+  <div class="desktop-logout">
+    <button (click)="openUserDialog()" class="logout-button standard-transition">Profil</button>
+    <button (click)="logout()" class="logout-button standard-transition">Logout</button>
+  </div>
+  <div class="mobile-logout">
+    <div class="logout-logo-text" (click)="openUserDialog()">
+      <img src="login/log_out_circle.png">
+      <button class="logout-button standard-transition">Profil</button>
+    </div>
+    <div class="logout-logo-text" (click)="logout()">
+      <img src="login/logout_logo.png">
+      <button class="logout-button standard-transition">Logout</button>
+    </div>
+  </div>
+</mat-dialog-actions>

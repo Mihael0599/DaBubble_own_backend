@@ -1,0 +1,67 @@
+<div class="messages-container standard-transition" (click)="hideAllEmojis()" [attr.data-message-id]="message.id" #reactBtn>
+    <div class="users-message-container"
+        *ngIf="message.senderId !== channelService.currentUserId">
+        <div class="message-container">
+            <div>
+                <img class="user-logo" src="avatar/{{message.userAvatar}}" alt="">
+            </div>
+            <div class="message-info">
+                <div class="user-date-container">
+                    <span>{{message.senderName}}</span>
+                    <p>{{message.timestamp?.toDate() | date:'HH:mm'}}</p>
+                </div>
+                <div class="message-content standard-transition">
+                    <h4>{{message.text}}</h4>
+                </div>
+                <div class="message-reaction-container" [class.shifted]="shiftContainer">
+                    <div *ngFor="let reaction of message.reactions; let i = index" class="reaction-wrapper"
+                        (mouseenter)="showReactionUserName(i)" (mouseleave)="hideReactionUserName()">
+
+                        <div class="reaction-container" *ngIf="i < 20 || showAllMessageReactions">
+                            <span>{{ reaction.emoji }}</span>
+                            <span>{{reaction.emojiCounter}}</span>
+                        </div>
+
+                        <div class="reaction-user-container" *ngIf="hoveredReactionIndex === i">
+                            <div>
+                                <p class="emoji">{{reaction.emoji}}</p>
+                            </div>
+                            <div>
+                                <h3>{{ reaction.user }}</h3>
+                            </div>
+                            <div><span>hat reagiert</span></div>
+                        </div>
+                    </div>
+                    <div class="reaction-container" *ngIf="message?.reactions?.length > 20">
+                        <p *ngIf="!showAllMessageReactions" (click)="showAllReactions()">{{message.reactions.length -
+                            20}} weitere</p>
+                        <p *ngIf="showAllMessageReactions" (click)="hideAllReactions()">Weniger anzeigen</p>
+                    </div>
+                </div>
+                <div class="answer-date-container" (click)="chatService.answerOnMessage(chatService.chatMode, message.id, message.text, message.senderName, message.userAvatar)">
+                    <div *ngIf="message.threadCount > 0">
+                        <span *ngIf="getLastThreadReplyTime()" class="last-reply-time">Letzte Antwort
+                            {{getLastThreadReplyTime() | date:'HH:mm'}}</span>
+                        <span>{{message.threadCount}} Antwort{{message.threadCount > 1 ? 'en' : ''}}</span>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="message-hover-options">
+        <div *ngIf="mode !== 'thread'" (click)="chatService.answerOnMessage(chatService.chatMode, message.id, message.text, message.senderName, message.userAvatar)" (mouseover)="imgComment='chat-section/comment-color.png'"
+                (mouseout)="imgComment='chat-section/comment.png'">
+            <img [src]="imgComment">
+        </div>
+        <div (click)="openEmojiPicker(reactBtn, $event)" (mouseover)="imgReaction='chat-section/add-reaction-color.png'"
+                (mouseout)="imgReaction='chat-section/add-reaction.png'">
+            <img [src]="imgReaction">
+        </div>
+        <div *ngFor="let emoji of chatService.mostUsedEmojis let i = index">
+            <div *ngIf="chatService.mostUsedEmojis.length > 0">
+                <p (click)="addMostUsedEmojiMessage(emoji, i)">{{emoji}}</p>
+            </div>
+        </div>
+    </div>
+</div>
