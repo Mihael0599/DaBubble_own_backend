@@ -111,9 +111,13 @@ export class SignupComponent {
   }
 
   navigateToAvatar() {
-    this.userService.createInitialUser(this.user).then(() => {
+    this.userService.createInitialUser(
+      this.user.name,
+      this.user.email,
+      this.user.password
+    ).then(() => {
       this.router.navigate(['avatar']);
-    }).catch(error => {
+    }).catch((error: any) => {
       console.error('Error during user creation:', error);
     });
   }

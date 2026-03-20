@@ -22,7 +22,7 @@ import { Userstorage } from '../../../models/userStorage.class';
   styleUrl: './user-channel-chat-section.component.scss',
 })
 export class UserChannelChatSectionComponent implements OnInit {
-  
+
   dataUser = inject(UserService);
   channelService = inject(ChannelService);
   chatService = inject(ChatService);
@@ -84,8 +84,8 @@ export class UserChannelChatSectionComponent implements OnInit {
   private updateUserStorage() {
     if (this.channelService.currentUserId && this.channelService.userSubcollectionId) {
       this.channelService.updateUserStorage(
-        this.channelService.currentUserId, 
-        this.channelService.userSubcollectionId, 
+        this.channelService.currentUserId,
+        this.channelService.userSubcollectionId,
         this.userstorage.toJSON(['channelId', 'showChannel'])
       );
     }
@@ -112,10 +112,10 @@ export class UserChannelChatSectionComponent implements OnInit {
 
   private async loadChannelDetails(channelId: string) {
     const channels = this.channelService.showChannelByUser;
-    const channel = channels?.find(c => c.channelId === channelId || c.id === channelId);
+    const channel = channels?.find(c => c.channelId === channelId || c.id === Number(channelId));
     if (channel) {
-      this.channelService.currentChannelName = channel.channelname;
-      this.channelService.currentChannelDescription = channel.description;
+      this.channelService.currentChannelName = channel.channelname || channel.name || '';
+      this.channelService.currentChannelDescription = channel.description || '';
       this.channelService.getChannelUserId(channelId);
       this.dataUser.getUserIdsFromChannel(channelId);
     } else {
@@ -127,9 +127,9 @@ export class UserChannelChatSectionComponent implements OnInit {
   openDialog(button: HTMLElement) {
     const rect = button.getBoundingClientRect();
     this.dialog.open(ChannelSectionComponent, {
-    position: {
-        top:  `${rect.bottom + window.scrollY}px`, 
-        left: `${rect.left   + window.scrollX}px`  
+      position: {
+        top: `${rect.bottom + window.scrollY}px`,
+        left: `${rect.left + window.scrollX}px`
       },
       width: '750px',
       height: '500px',

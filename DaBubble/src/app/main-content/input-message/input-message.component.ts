@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { User } from '../../../models/user.class';
 import { ChannelService } from '../../services/channel.service';
 import { ChatService } from '../../services/chat.service';
-import { Allchannels } from '../../../models/allchannels.class';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { UserService } from '../../services/user.service';
@@ -35,7 +34,7 @@ export class InputMessageComponent implements OnInit {
   channelService = inject(ChannelService);
   chatService = inject(ChatService);
   dataUser = inject(UserService)
-  users$: Observable<User[]> | undefined;
+  users$: Observable<any[]> | undefined;
   messageText: string = '';
   imgSrcReaction: any = 'send-email/add-reaction.png';
   imgSrcMention: any = 'send-email/mention.png';
@@ -95,10 +94,11 @@ export class InputMessageComponent implements OnInit {
     this.showUserList = false;
   }
 
-  selecetedChannelMention(channel: Allchannels, index: number) {
-    this.messageText += channel.channelname;
+  selecetedChannelMention(channel: any, index: number) {
+    this.messageText += channel.channelname || channel.name || '';
     this.showChanelList = false;
   }
+
 
   sendMessage() {
     if (!this.messageText.trim()) return;
@@ -114,22 +114,22 @@ export class InputMessageComponent implements OnInit {
 
   private sendThreadMessage(name?: string, avatar?: string) {
     this.chatService.sendThreadMessage(
-      this.chatService.chatMode, 
-      this.chatService.chatId, 
-      this.chatService.parentMessageId, 
-      this.channelService.currentUserId, 
-      this.messageText, 
-      name, 
+      this.chatService.chatMode,
+      this.chatService.chatId,
+      this.chatService.parentMessageId,
+      this.channelService.currentUserId,
+      this.messageText,
+      name,
       avatar
     );
   }
 
   private sendChatMessage(name?: string, avatar?: string) {
     this.chatService.sendChatMessage(
-      this.chatService.chatMode, 
-      this.messageText, 
-      this.channelService.currentUserId, 
-      name, 
+      this.chatService.chatMode,
+      this.messageText,
+      this.channelService.currentUserId,
+      name,
       avatar
     );
   }

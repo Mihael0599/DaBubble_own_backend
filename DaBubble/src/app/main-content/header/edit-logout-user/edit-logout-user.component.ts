@@ -35,9 +35,9 @@ export class EditLogoutUserComponent {
   openUserDialog() {
     this.userDialog.open(UserCardComponent, {
       panelClass: 'user-profil',
-      data: { 
-        user: this.channelService.currentUser, 
-        urlUserId: this.channelService.currentUserId 
+      data: {
+        user: this.channelService.currentUser,
+        urlUserId: this.channelService.currentUserId
       }
     })
     this.close();
@@ -49,8 +49,7 @@ export class EditLogoutUserComponent {
   }
 
   async logout() {
-    await this.userService.updateUserDocument(this.userService.channelService.currentUserId, { active: false });
-    this.router.navigate(['']);
+    this.userService.logout();
     this.close();
     this.dataUser.showChannel = false;
     this.dataUser.showChatPartnerHeader = false;

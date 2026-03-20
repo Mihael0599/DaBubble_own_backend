@@ -113,8 +113,8 @@
                 track $index) {
                   <div
                     class="current-channel-name standard-transition"
-                    (click)="openChannel('channels', channel.channelname, channel.channelId, channel.description || '')"
-                    [ngClass]="{'active-channel': activeChannelId === channel.channelId}">
+                    (click)="openChannel('channels', channel.channelname || channel.name || '', channel.channelId || channel.id?.toString() || '', channel.description || '')"
+                   [ngClass]="{'active-channel': activeChannelId === (channel.channelId || channel.id?.toString())}">
                       <span>#</span>
                       <h2>{{ channel.channelname }}</h2>
                   </div>
@@ -277,12 +277,12 @@
                     (click)="
                       openChannel(
                         'channels',
-                        channel.channelname,
-                        channel.channelId,
+                        channel.channelname || channel.name || '',
+                        channel.channelId || channel.id?.toString() || '',
                         channel.description || ''
                       )
                     "
-                    [ngClass]="{'active-channel': activeChannelId === channel.channelId}">
+                   [ngClass]="{'active-channel': activeChannelId === (channel.channelId || channel.id?.toString())}">
                     <span>#</span>
                     <h2>{{ channel.channelname }}</h2>
                   </div>

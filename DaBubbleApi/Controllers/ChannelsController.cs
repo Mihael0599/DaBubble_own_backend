@@ -43,4 +43,49 @@ using Microsoft.EntityFrameworkCore;
         return CreatedAtAction(nameof(GetChannel), new { id = channel.id }, channel);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateChannel(int id, CreateChannelDto dto)
+    {
+        var channel = await _context.Channels.FindAsync(id);
+        if (channel == null) return NotFound();
+
+        channel.Name = dto.Name;
+        channel.Description = dto.Description;
+        await _context.SaveChangesAsync();
+        return Ok(channel);
+    }
+
+    [HttpPost("{id}/users")]
+    public async Task<IActionResult> AddUserToChannel(int id, [FromBody] AddUserDto dto)
+    {
+        var channel = await _context.Channels.FindAsync(id);
+        if (channel == null) return NotFound();
+        // Wird später mit Channel-User Relation implementiert
+        return Ok();
+    }
+
+    [HttpDelete("{id}/users/{userId}")]
+    public async Task<IActionResult> RemoveUserFromChannel(int id, string userId)
+    {
+        var channel = await _context.Channels.FindAsync(id);
+        if (channel == null) return NotFound();
+        return Ok();
+    }
+
+    [HttpGet("{id}/users")]
+    public async Task<IActionResult> GetChannelUsers(int id)
+    {
+        var messages = await _context.Messages
+            .Where(m => m.ChannelId == id)
+            .Include(m => m.Sender)
+            .Select(m => new {
+                id = m.Sender.Id,
+                displayName = m.Sender.DisplayName,
+                email = m.Sender.Email,
+                avatarUrl = m.Sender.AvatarUrl
+            })
+            .Distinct()
+            .ToListAsync();
+        return Ok(messages);
+    }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 
 [ApiController]
-[Route("api/controller")]
+[Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
@@ -44,7 +44,7 @@ using Microsoft.AspNetCore.Identity;
         {
             Token = _tokenService.CreateToken(user),
             Email = user.Email,
-            DisplayName = user.DisplayName
+            DisplayName = user.DisplayName,
         };
     }
 
@@ -64,7 +64,8 @@ using Microsoft.AspNetCore.Identity;
         {
             Token = _tokenService.CreateToken(user),
             Email = user.Email!,
-            DisplayName = user.DisplayName
+            DisplayName = user.DisplayName,
+            UserId = user.Id
         };
     }
 

@@ -1,396 +1,170 @@
-import { Injectable, inject, Injector, runInInjectionContext} from '@angular/core';
-import { Firestore, collection, query, where, getDocs, addDoc, doc, CollectionReference, collectionData, getDoc, updateDoc, deleteDoc, docData, } from '@angular/fire/firestore';
-import { User } from '../../models/user.class';
-import { map, Observable } from 'rxjs';
-import { Auth, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ChannelService } from './channel.service';
 
+export interface AppUser {
+  id: string;
+  userId: string;
+  displayName: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  avatar: string;
+  active: boolean;
+}
+
+export interface AuthResponse {
+  token: string;
+  email: string;
+  displayName: string;
+  userId: string;
+  id?: string;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private firestore = inject(Firestore);
-  channelService = inject(ChannelService);
+  private http = inject(HttpClient);
   private router = inject(Router);
-  private auth = inject(Auth);
-  private injector = inject(Injector);
-  onlineUser: string = 'status/online.png';
-  offlineUser: string = 'status/offline.png';
+
   showChannel = false;
   showChatPartnerHeader = false;
   showNewMessage = true;
-  private freshLogin = false;
-  usersIdsInChannel: any[] = [];
-  userNamesInChannel: any[] = [];
-  userAvatarInChannel: any[] = [];
-  private pendingRegistrationId = new BehaviorSubject<string | null>(null);
-  pendingRegistrationId$ = this.pendingRegistrationId.asObservable();
-  userAvatarInChannel$ = new BehaviorSubject<{ name: string; avatar: string; userId: string, userActive: boolean, email: string, active: boolean }[]>([]);
-  pendingUser: User | null = null;
   loginIsSucess = false;
   chatId: any = '';
+  usersIdsInChannel: any[] = [];
 
-  getUsersCollection(): CollectionReference {
-    return runInInjectionContext(this.injector, () =>
-      collection(this.firestore, 'users')
-    );
+  private currentUserSubject = new BehaviorSubject<AuthResponse | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  userAvatarInChannel$ = new BehaviorSubject<{
+    name: string;
+    avatar: string;
+    userId: string;
+    userActive: boolean;
+    email: string;
+    active: boolean;
+  }[]>([]);
+
+  onlineUser: string = 'status/online.png';
+  offlineUser: string = 'status/offline.png';
+  pendingUser: any = null;
+  pendingRegistrationId$ = new BehaviorSubject<string | null>(null);
+  channelService = inject(ChannelService);
+
+  constructor() {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const user = JSON.parse(stored);
+      this.currentUserSubject.next(user);
+    }
   }
 
-  getSingleUserRef(docId: string) {
-    return runInInjectionContext(this.injector, () =>
-      doc(this.getUsersCollection(), docId)
-    );
+  get currentUser() {
+    return this.currentUserSubject.value;
   }
 
-  getUserRefsByIds() {
-    return this.usersIdsInChannel.map((id) => {
-      if (!id || id.trim() === '') {
-        return null;
-      }
-      return runInInjectionContext(this.injector, () =>
-        doc(this.getUsersCollection(), id)
-      );
-    }).filter(ref => ref !== null);
+  get isLoggedIn() {
+    return !!this.currentUserSubject.value;
   }
 
-  getChatRef(docId: string) {
-    return runInInjectionContext(this.injector, () =>
-      collection(this.getSingleUserRef(docId), 'chats')
-    );
-  }
-
-  async loginService(email: string, password: string) {
-    const userQuery = runInInjectionContext(this.injector, () =>
-      query(
-        this.getUsersCollection(),
-        where('email', '==', email),
-        where('password', '==', password)
-      )
-    );
-
-    const result = await runInInjectionContext(this.injector, () =>
-      getDocs(userQuery)
-    );
-
-    if (!result.empty) {
-      const userDoc = result.docs[0];
-      this.channelService.currentUserId = userDoc.id;
-      await this.updateUserDocument(this.channelService.currentUserId, {
-        active: true,
+  async loginService(email: string, password: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post<AuthResponse>(
+        `${environment.apiUrl}/auth/login`,
+        { email, password }
+      ).subscribe({
+        next: (response) => {
+          this.setUser(response);
+          this.loginIsSucess = true;
+          resolve();
+        },
+        error: (err) => reject(err)
       });
-    }
-    const userStorageSnapshot = await runInInjectionContext(this.injector, () =>
-      getDocs(
-        this.channelService.getUserSubCol(this.channelService.currentUserId)
-      )
-    );
-    if (!userStorageSnapshot.empty) {
-      const userStorage = userStorageSnapshot.docs[0];
-      this.channelService.userSubcollectionId = userStorage.id;
-    }
-    this.loginIsSucess = true;
-    this.freshLogin = true;
-  }
-
-  async signInWithGoogle() {
-    try {
-      const provider = new GoogleAuthProvider();
-      const credential = await runInInjectionContext(this.injector, () =>
-        signInWithPopup(this.auth, provider)
-      );
-      const user = credential.user;
-
-      const userQuery = runInInjectionContext(this.injector, () =>
-        query(this.getUsersCollection(), where('email', '==', user.email))
-      );
-
-      const result = await runInInjectionContext(this.injector, () =>
-        getDocs(userQuery)
-      );
-
-      if (result.empty) {
-        const newUser = new User();
-        newUser.email = user.email || '';
-        newUser.name = user.displayName || user.email?.split('@')[0] || '';
-        newUser.avatar = 'empty-avatar.png';
-        newUser.active = true;
-        const { userId, userStorageId } = await this.createUserBySignInWithGoogle(newUser);
-        this.channelService.currentUserId = userId;
-        this.channelService.userSubcollectionId = userStorageId;
-      } else {
-        const userDoc = result.docs[0];
-        this.channelService.currentUserId = userDoc.id;
-        await this.updateUserDocument(this.channelService.currentUserId, {
-          active: true,
-        });
-        
-        const userStorageSnapshot = await runInInjectionContext(this.injector, () =>
-          getDocs(
-            this.channelService.getUserSubCol(this.channelService.currentUserId)
-          )
-        );
-        if (!userStorageSnapshot.empty) {
-          const userStorage = userStorageSnapshot.docs[0];
-          this.channelService.userSubcollectionId = userStorage.id;
-        }
-      }
-      this.loginIsSucess = true;
-      this.freshLogin = true;
-      this.router.navigate(['mainpage', this.channelService.currentUserId]);
-      return user;
-    } catch (error) {
-      console.log('Error during Google sign in', error);
-      throw error;
-    }
-  }
-
-  async signInWithGuest() {
-    const guestEmail = 'guestemail@gmail.com';
-    const userQuery = runInInjectionContext(this.injector, () =>
-      query(this.getUsersCollection(), where('email', '==', guestEmail))
-    );
-
-    const result = await runInInjectionContext(this.injector, () =>
-      getDocs(userQuery)
-    );
-
-    if (!result.empty) {
-      if (!result.empty) {
-        const userDoc = result.docs[0];
-        this.channelService.currentUserId = userDoc.id;
-        this.channelService.currentUser = new User(userDoc.data());
-        await this.updateUserDocument(this.channelService.currentUserId, {
-          active: true,
-        });
-        this.loginIsSucess = true;
-        this.freshLogin = true;
-      }
-    } else {
-      console.log('Guest user not found. Please create a guest user first.');
-    }
-  }
-
-  async createUserBySignInWithGoogle(
-    user: User
-  ): Promise<{ userId: string; userStorageId: string }> {
-    try {
-      const userData: any = {
-        active: true,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-      };
-      if (user.password) {
-        userData.password = user.password;
-      }
-
-      const userRef = await runInInjectionContext(this.injector, () =>
-        addDoc(collection(this.firestore, 'users'), userData)
-      );
-      const userId = userRef.id;
-      const userStorageColRef = runInInjectionContext(this.injector, () =>
-        collection(userRef, 'userstorage')
-      );
-      const userStorageDocRef = await runInInjectionContext(this.injector, () =>
-        addDoc(userStorageColRef, {
-          channel: user.userstorage,
-        })
-      );
-      const userStorageId = userStorageDocRef.id;
-      return {
-        userId,
-        userStorageId,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateUserDocument(userId: string, data: any) {
-    return runInInjectionContext(this.injector, () => {
-      const userDocRef = doc(this.firestore, 'users', userId);
-      return updateDoc(userDocRef, data);
     });
   }
 
-  async createInitialUser(
-    user: User
-  ): Promise<{ userId: string; userStorageId: string }> {
-    try {
-      const userData: any = {
-        active: false,
-        name: user.name,
-        email: user.email,
-        password: user.password,
-        avatar: 'empty-avatar.png',
-        registrationComplete: false,
-      };
-
-      const userRef = await runInInjectionContext(this.injector, () =>
-        addDoc(collection(this.firestore, 'users'), userData)
-      );
-      const userId = userRef.id;
-      const userStorageColRef = runInInjectionContext(this.injector, () =>
-        collection(userRef, 'userstorage')
-      );
-
-      const userStorageDocRef = await runInInjectionContext(this.injector, () =>
-        addDoc(userStorageColRef, {})
-      );
-      const userStorageId = userStorageDocRef.id;
-      this.pendingRegistrationId.next(userId);
-      this.pendingUser = user;
-      return {
-        userId,
-        userStorageId,
-      };
-    } catch (error) {
-      console.log('Error creating initial user:', error);
-      throw error;
-    }
+  async createInitialUser(displayName: string, email: string, password: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post<AuthResponse>(
+        `${environment.apiUrl}/auth/register`,
+        { displayName, email, password }
+      ).subscribe({
+        next: (response) => {
+          this.setUser(response);
+          resolve();
+        },
+        error: (err) => reject(err)
+      });
+    });
   }
 
-  getPendingRegistrationId(): string | null {
-    return this.pendingRegistrationId.getValue();
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(
+      `${environment.apiUrl}/auth/forgot-password`,
+      JSON.stringify(email),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
-  async completeUserRegistration(avatarPath: string): Promise<boolean> {
-    const userId = this.pendingRegistrationId.getValue();
-    if (!userId) {
-      return false;
-    }
-    try {
-      await runInInjectionContext(this.injector, () =>
-        updateDoc(doc(this.firestore, 'users', userId), {
-          avatar: avatarPath,
-          registrationComplete: true,
-        })
-      );
-      this.pendingRegistrationId.next(null);
-      return true;
-    } catch (error) {
-      console.log('Update failed:', error);
-      return false;
-    }
+  resetPassword(email: string, token: string, newPassword: string): Observable<any> {
+    return this.http.post(
+      `${environment.apiUrl}/auth/reset-password`,
+      { email, token, newPassword }
+    );
   }
 
-  async cleanupIncompleteRegistration(): Promise<void> {
-    const userId = this.pendingRegistrationId.getValue();
-    if (userId) {
-      await runInInjectionContext(this.injector, () =>
-        deleteDoc(doc(this.firestore, 'users', userId))
-      );
-      this.pendingRegistrationId.next(null);
-      this.pendingUser = null;
-    }
+  getAllUsers(): Observable<AppUser[]> {
+    return this.http.get<AppUser[]>(`${environment.apiUrl}/users`).pipe(
+      map(users => users.map(u => ({
+        ...u,
+        name: u.displayName || '',
+        userId: u.id,
+        avatar: u.avatarUrl || 'empty-avatar.png',
+        active: u.active ?? false
+      })))
+    );
+  }
+
+  getUserById(userId: string): Observable<AppUser> {
+    return this.http.get<AppUser>(`${environment.apiUrl}/users/${userId}`);
   }
 
   async updateUserName(newName: string): Promise<void> {
-    if (!this.channelService.currentUserId) {
-      throw new Error('Kein eingeloggter Benutzer');
-    }
-    const userRef = this.getSingleUserRef(this.channelService.currentUserId);
-    await runInInjectionContext(this.injector, () =>
-      updateDoc(userRef, { name: newName })
-    );
-    if (this.channelService.currentUser) {
-      this.channelService.currentUser.name = newName;
-    }
-  }
-
-  async updateUserAvatar(newAvatar: string): Promise<void> {
-    if (!this.channelService.currentUserId) {
-      throw new Error('Kein eingeloggter Benutzer');
-    }
-    const userRef = this.getSingleUserRef(this.channelService.currentUserId);
-    await runInInjectionContext(this.injector, () =>
-      updateDoc(userRef, { avatar: newAvatar })
-    );
-    if (this.channelService.currentUser) {
-      this.channelService.currentUser.avatar = newAvatar;
-    }
-  }
-
-  getAllUsers(): Observable<User[]> {
-    return runInInjectionContext(this.injector, () =>
-      collectionData(this.getUsersCollection(), { idField: 'userId' })
-    ) as Observable<User[]>;
-  }
-
-  async getUserIdsFromChannel(docId: string) {
-    this.clearUserInChannelsArray();
-    try {
-      const snapshot = await runInInjectionContext(this.injector, () =>
-        getDoc(this.channelService.getSingleChannelRef(docId))
-      );
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        if (data && Array.isArray(data['userId'])) {
-          this.usersIdsInChannel.push(...data['userId']);
-          for (const id of this.usersIdsInChannel) {
-            const nameSnap = await runInInjectionContext(this.injector, () =>
-              getDoc(this.getSingleUserRef(id))
-            );
-            const dataName = nameSnap.data();
-            if (dataName) {
-              this.userAvatarInChannel$.next([
-                ...this.userAvatarInChannel$.value,
-                { avatar: dataName['avatar'], name: dataName['name'], userId: id, userActive: dataName['active'], email: dataName['email'], active: dataName['active'] }
-              ]);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Error getting user IDs from channel:', error);
-    }
-  }
-
-  async showCurrentUserData() {
-    const userRef = this.getSingleUserRef(this.channelService.currentUserId);
-    this.channelService.unsubscribeUserData = runInInjectionContext(
-      this.injector,
-      () => docData(userRef)
-    ).subscribe((data) => {
-      this.channelService.currentUser = new User(data);
+    return new Promise((resolve, reject) => {
+      this.http.put(
+        `${environment.apiUrl}/users/displayname`,
+        { displayName: newName }
+      ).subscribe({
+        next: () => resolve(),
+        error: (err) => reject(err)
+      });
     });
-    const storageRef = this.channelService.getUserSubCol(
-      this.channelService.currentUserId
-    );
-    const storageSnapshot = await runInInjectionContext(this.injector, () =>
-      getDocs(storageRef)
-    );
-    storageSnapshot.forEach((doc) => {
-      const data = doc.data();
-      this.channelService.userSubcollectionChannelId = data['channelId'];
-      this.channelService.userSubcollectionId = doc.id;
-      
-      if (!this.freshLogin) {
-        if (this.channelService.userSubcollectionChannelId && 
-            this.channelService.userSubcollectionChannelId.trim() !== '') {
-          this.channelService.getChannelName(this.channelService.userSubcollectionChannelId);
-        }
-        if (data['chatId'] && data['chatId'].trim() !== '') {
-          this.chatId = data['chatId'];
-        }
-      }
+  }
+
+  async updateUserAvatar(avatarUrl: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.put(
+        `${environment.apiUrl}/users/avatar`,
+        { avatarUrl }
+      ).subscribe({
+        next: () => resolve(),
+        error: (err) => reject(err)
+      });
     });
-    
-    if (!this.freshLogin) {
-      if (this.channelService.userSubcollectionChannelId && 
-          this.channelService.userSubcollectionChannelId.trim() !== '') {
-        this.getUserIdsFromChannel(this.channelService.userSubcollectionChannelId);
-      }
-    } else {
-      this.freshLogin = false;
-      this.showChannel = false;
-      this.showChatPartnerHeader = false;
-      this.showNewMessage = true;
-      this.chatId = '';
-    }
-    this.channelService.showUserChannel();
+  }
+
+  showFilteredUsers(input: string): Observable<AppUser[]> {
+    return this.getAllUsers().pipe(
+      map((users: AppUser[]) =>
+        users.filter((user: AppUser) =>
+          user.displayName.toLowerCase().startsWith(input.toLowerCase())
+        )
+      )
+    );
   }
 
   clearUserInChannelsArray() {
@@ -398,13 +172,78 @@ export class UserService {
     this.userAvatarInChannel$.next([]);
   }
 
-  showFilteredUsers(input: string): Observable<User[]> {
-    return this.getAllUsers().pipe(
-      map((users: User[]) =>
-        users.filter((user: User) =>
-          user.name.toLowerCase().startsWith(input.toLowerCase())
-        )
-      )
-    );
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/']);
+  }
+
+  private setUser(user: AuthResponse) {
+    localStorage.setItem('token', user.token);
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+    // currentUserId im ChannelService setzen
+    this.channelService.currentUserId = user.userId || user.id || '';
+    this.channelService.currentUser = user;
+  }
+
+  async getUserIdsFromChannel(channelId: string): Promise<void> {
+    this.clearUserInChannelsArray();
+    this.http.get<any[]>(
+      `${environment.apiUrl}/channels/${channelId}/users`
+    ).subscribe(users => {
+      this.usersIdsInChannel = users.map(u => u.id);
+      this.userAvatarInChannel$.next(users.map(u => ({
+        name: u.displayName,
+        avatar: u.avatarUrl || 'empty-avatar.png',
+        userId: u.id,
+        userActive: true,
+        email: u.email,
+        active: true
+      })));
+    });
+  }
+
+  async showCurrentUserData(): Promise<void> {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const user = JSON.parse(stored);
+      this.channelService.currentUserId = user.userId || user.id || '';
+    }
+  }
+
+  async completeUserRegistration(avatarPath: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.updateUserAvatar(avatarPath)
+        .then(() => resolve(true))
+        .catch(() => resolve(false));
+    });
+  }
+
+  async cleanupIncompleteRegistration(): Promise<void> {
+    this.pendingUser = null;
+    this.pendingRegistrationId$.next(null);
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    // Google Login wird später implementiert
+    console.log('Google Login noch nicht implementiert');
+  }
+
+  async signInWithGuest(): Promise<void> {
+    return this.loginService('guestemail@gmail.com', 'Guest123!');
+  }
+
+  async updateUserDocument(userId: string, data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.put(
+        `${environment.apiUrl}/users/${userId}/status`,
+        data
+      ).subscribe({
+        next: () => resolve(),
+        error: () => resolve() // Fehler ignorieren beim Logout
+      });
+    });
   }
 }

@@ -2,7 +2,6 @@ import { Component, ElementRef, inject, Injector, OnInit, runInInjectionContext,
 import { UserService } from '../../services/user.service';
 import { NavigationService } from '../../services/navigation.service';
 import { ActivatedRoute } from '@angular/router';
-import { docData, onSnapshot } from '@angular/fire/firestore';
 import { User } from '../../../models/user.class';
 import { Observable, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -69,7 +68,7 @@ export class ChatSectionComponent implements OnInit, AfterViewInit, AfterViewChe
   anchorSide: 'left' | 'right' = 'left';
   trackById = (_: number, m: any) => m?.id ?? _;
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.setupRouteSubscription();
     this.setupNavigationSubscription();
   }
@@ -99,10 +98,10 @@ export class ChatSectionComponent implements OnInit, AfterViewInit, AfterViewChe
   private handleChannelRoute(): void {
     const url = window.location.href;
     const channelMatch = url.match(/\/channels\/([^\/\?#]+)/);
-/*     if (channelMatch) {
-      const channelId = channelMatch[1];
-      this.initializeChannelMode(channelId);
-    } */
+    /*     if (channelMatch) {
+          const channelId = channelMatch[1];
+          this.initializeChannelMode(channelId);
+        } */
   }
 
   private initializeComponent(): void {
@@ -120,7 +119,7 @@ export class ChatSectionComponent implements OnInit, AfterViewInit, AfterViewChe
         }, 500);
       }
     });
-    
+
     this.navigationService.scrollToBottom$.subscribe(shouldScroll => {
       if (shouldScroll) {
         setTimeout(() => {
@@ -156,25 +155,15 @@ export class ChatSectionComponent implements OnInit, AfterViewInit, AfterViewChe
   }
 
   showCurrentUserData() {
-    const userRef = this.dataUser.getSingleUserRef(this.channelService.currentUserId);
-    this.unsubscribeUserData = runInInjectionContext(this.injector, () => docData(userRef).subscribe(data => {
-      this.channelService.currentUser = new User(data);
-    }));
+    this.dataUser.getUserById(this.channelService.currentUserId).subscribe(user => {
+      this.channelService.currentUser = user;
+    });
   }
 
   showUserChannel() {
-    const channelRef = this.channelService.getChannelRef();
-    this.unsubscribeUserChannels = runInInjectionContext(this.injector, () =>
-      onSnapshot(channelRef, (snapshot) => {
-        this.channelService.channels = [];
-        snapshot.forEach(doc => {
-          this.channelService.channels.push({
-            ...doc.data(),
-            channelId: doc.id
-          });
-        });
-      })
-    );
+    this.channelService.getAllChannels().subscribe(channels => {
+      this.channelService.channels = channels;
+    });
   }
 
   private scrollToBottom(): void {
@@ -251,10 +240,10 @@ export class ChatSectionComponent implements OnInit, AfterViewInit, AfterViewChe
   hideAllEmojis() {
     this.showEmojis = false;
   }
-  
-openEmojiPicker(ev: { anchor: HTMLElement; side: 'left'|'right'; message: any; index: number; context: 'chat'|'thread'; }) {
-  this.pickerService.open(ev);
-}
+
+  openEmojiPicker(ev: { anchor: HTMLElement; side: 'left' | 'right'; message: any; index: number; context: 'chat' | 'thread'; }) {
+    this.pickerService.open(ev);
+  }
 
   @HostListener('window:resize')
   onResize() { this.pickerService.reposition('chat'); }

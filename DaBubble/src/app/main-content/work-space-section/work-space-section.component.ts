@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -7,8 +6,6 @@ import {
   OnInit,
   viewChild,
   HostListener,
-  runInInjectionContext,
-  Injector,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
@@ -23,21 +20,16 @@ import { CreateChannelSectionComponent } from '../create-channel-section/create-
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, Subject } from 'rxjs';
-import { User } from '../../../models/user.class';
 import { Allchannels } from '../../../models/allchannels.class';
 import { ChannelService } from '../../services/channel.service';
 import { ChatService } from '../../services/chat.service';
 import { Userstorage } from '../../../models/userStorage.class';
 import { FormsModule } from '@angular/forms';
 import { NavigationService } from '../../services/navigation.service';
-import { ChatSectionComponent } from '../chat-section/chat-section.component';
 import { SearchService, SearchResult } from '../../services/search.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { ChannelSectionComponent } from '../channel-section/channel-section.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { BehaviorSubject } from 'rxjs';
-import { ThreadSectionComponent } from '../thread-section/thread-section.component';
+
 
 @Component({
   selector: 'app-work-space-section',
@@ -71,25 +63,23 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
   route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private searchService = inject(SearchService);
-  private firestore = inject(Firestore);
-  private injector = inject(Injector);
   readonly dialog = inject(MatDialog);
   private breakpointObserver = inject(BreakpointObserver);
-  
+
   unsubChannels!: Subscription;
   private userDataSub?: Subscription;
   private channelDataSub?: Subscription;
   private searchSub?: Subscription;
-  
+
   newChannel = new Allchannels();
   userstorage = new Userstorage();
   isDrawerOpen = true;
   selectedUser: any;
   urlUserId!: string;
-  users$: Observable<User[]> | undefined;
+  users$: Observable<any[]> | undefined;
   myPanel: any = true;
 
-  channels$: Observable<Allchannels[]> | undefined;
+  channels$: Observable<any[]> | undefined;
   onlineUser: string = 'status/online.png';
   offlineUser: string = 'status/offline.png';
   imgSrc: string = 'work-space/edit-square.png';
@@ -118,7 +108,7 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
   }
 
   onChange(user: any) {
-    
+
   }
 
   ngOnInit(): void {
@@ -133,6 +123,7 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
     this.getUserData();
     this.getChannelData();
     this.initializeSearch();
+    this.channelService.showUserChannel()
   }
 
   initializeSearch() {
@@ -177,19 +168,19 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
     (document.activeElement as HTMLElement)?.blur();
     const { width, height } = this.channelService.getDialogDimensions();
     this.dialog.open(CreateChannelSectionComponent, {
-    width,
-    height,
-    maxWidth: width,
-    maxHeight: height,
-    panelClass: 'channel-dialog-container',
-    autoFocus: false,
-    restoreFocus: false,
+      width,
+      height,
+      maxWidth: width,
+      maxHeight: height,
+      panelClass: 'channel-dialog-container',
+      autoFocus: false,
+      restoreFocus: false,
     });
   }
 
   mobileMode() {
-    if(this.navigationService.isMobile) {
-            this.chatService.showThread = false;
+    if (this.navigationService.isMobile) {
+      this.chatService.showThread = false;
     }
     this.navigationService._mobileHeaderDevspace.next(true);
     this.dataUser.showChannel = true;
@@ -222,7 +213,7 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
   }
 
   onSearchInput() {
-    const term = this.searchTerm;    
+    const term = this.searchTerm;
     if (this.isChannelSearch(term)) {
       this.dropdownType = 'channel';
       const channelKeyword = this.extractKeyword(term, '#');
@@ -230,7 +221,7 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
     } else if (this.isUserSearch(term)) {
       this.dropdownType = 'user';
       const userKeyword = this.extractKeyword(term, '@');
-      this.searchUsers(userKeyword);      
+      this.searchUsers(userKeyword);
     } else {
       this.dropdownType = 'normal';
       this.searchSubject.next(term);
@@ -456,43 +447,13 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
   }
 
   private async getChatDocument(chatId: string): Promise<any> {
-    try {
-      const chatSnap = await runInInjectionContext(this.injector, async () => {
-        const chatDocRef = doc(this.firestore, 'chats', chatId);
-        return await getDoc(chatDocRef);
-      });
-      return chatSnap.exists() ? chatSnap.data() : null;
-    } catch (error) {
-      console.error('Error getting chat document:', error);
-      return null;
-    }
+    return null;
   }
 
   private async getUserById(userId: string): Promise<any> {
-    try {
-      const userSnap = await this.getUserSnapshot(userId);
-      return userSnap?.exists() ? this.mapUserData(userSnap) : null;
-    } catch (error) {
-      console.error('Error getting user by ID:', error);
-      return null;
-    }
-  }
-
-  private async getUserSnapshot(userId: string) {
-    return await runInInjectionContext(this.injector, async () => {
-      const userDocRef = doc(this.firestore, 'users', userId);
-      return await getDoc(userDocRef);
+    return new Promise((resolve) => {
+      this.dataUser.getUserById(userId).subscribe(user => resolve(user));
     });
-  }
-
-  private mapUserData(userSnap: any) {
-    const userData = userSnap.data();
-    return {
-      userId: userSnap.id,
-      name: userData['name'],
-      avatar: userData['avatar'],
-      active: userData['active'] || false
-    };
   }
 
   openNewMessage() {
@@ -503,9 +464,9 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
     this.activeUserId = '';
     this.router.navigate(['mainpage', this.channelService.currentUserId, 'new-message']);
     this.navigationService.setMobileHeaderDevspace(true);
-    }
+  }
 
-     ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.unsubChannels?.unsubscribe();
     this.userDataSub?.unsubscribe();
     this.channelDataSub?.unsubscribe();

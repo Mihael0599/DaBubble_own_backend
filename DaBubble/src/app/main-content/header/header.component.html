@@ -18,10 +18,10 @@
   <div class="user-container" #div (click)="openDialog('0ms', '0ms', div)">
     <div class="d-none-responsive standard-transition">
       <div>
-        <span class="standard-transition name"> {{channelService.currentUser?.name}} </span>
+        <span class="standard-transition name"> {{channelService.currentUser?.displayName}} </span>
       </div>
       <div class="avatar-container">
-        <img *ngIf="channelService?.currentUser?.avatar" [src]="'avatar/' + channelService.currentUser?.avatar">
+        <img *ngIf="channelService?.currentUser?.avatarUrl" [src]="'avatar/' + channelService.currentUser?.avatarUrl">
         <img class="status-img" src="{{ channelService.currentUser?.active ? onlineUser : offlineUser }}" alt="">
       </div>
       <div>
@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="desktop avatar-container" (click)="openDialogMobile()">
-        <img *ngIf="channelService?.currentUser?.avatar" [src]="'avatar/' + channelService.currentUser?.avatar">
+        <img *ngIf="channelService?.currentUser?.avatarUrl" [src]="'avatar/' + channelService.currentUser?.avatarUrl">
   </div>
 
   <div class="search-results" *ngIf="showDropdown">

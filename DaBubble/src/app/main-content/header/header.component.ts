@@ -15,7 +15,6 @@ import { NavigationService } from '../../services/navigation.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { MatBottomSheet, MatBottomSheetRef, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 
 @Component({
@@ -34,15 +33,13 @@ import { MatBottomSheet, MatBottomSheetRef, MatBottomSheetModule } from '@angula
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  readonly dialog = inject(MatDialog); 
+  readonly dialog = inject(MatDialog);
   private dataUser = inject(UserService);
   public channelService = inject(ChannelService);
   private searchService = inject(SearchService);
   private chatService = inject(ChatService);
   navigationService = inject(NavigationService);
   private router = inject(Router);
-  private firestore = inject(Firestore);
-  private injector = inject(Injector);
   dialogRef = inject(MatDialogRef<EditLogoutUserComponent>, { optional: true });
   bottomSheetRef = inject(MatBottomSheetRef<EditLogoutUserComponent>, { optional: true });
 
@@ -74,14 +71,14 @@ export class HeaderComponent {
     (document.activeElement as HTMLElement)?.blur();
     const rect = div.getBoundingClientRect();
     const dialogWidth = 270;
-    const dialogRef =  this.dialog.open(EditLogoutUserComponent, {
+    const dialogRef = this.dialog.open(EditLogoutUserComponent, {
       autoFocus: false,
-        position: {
-          top: `${rect.bottom + window.scrollY + 8}px`,
-          left: `${rect.right + window.scrollX - dialogWidth}px`,
-        },
-        width: '250px',
-        maxWidth: '250px',
+      position: {
+        top: `${rect.bottom + window.scrollY + 8}px`,
+        left: `${rect.right + window.scrollX - dialogWidth}px`,
+      },
+      width: '250px',
+      maxWidth: '250px',
       enterAnimationDuration,
       exitAnimationDuration,
     });
@@ -89,7 +86,7 @@ export class HeaderComponent {
 
   openDialogMobile(): void {
     const bottomSheetRef = this.bottomSheet.open(EditLogoutUserComponent, {
-    panelClass: 'select-user-bottomsheet',
+      panelClass: 'select-user-bottomsheet',
     });
   }
 
@@ -103,7 +100,7 @@ export class HeaderComponent {
   }
 
   onSearchInput() {
-    const term = this.searchTerm;    
+    const term = this.searchTerm;
     if (this.isChannelSearch(term)) {
       this.dropdownType = 'channel';
       const channelKeyword = this.extractKeyword(term, '#');
@@ -111,7 +108,7 @@ export class HeaderComponent {
     } else if (this.isUserSearch(term)) {
       this.dropdownType = 'user';
       const userKeyword = this.extractKeyword(term, '@');
-      this.searchUsers(userKeyword);      
+      this.searchUsers(userKeyword);
     } else {
       this.dropdownType = 'normal';
       this.searchSubject.next(term);
@@ -161,8 +158,8 @@ export class HeaderComponent {
     if (keyword) {
       this.searchService.searchUsers(keyword).subscribe(results => {
         this.userResults = results;
-        
-        
+
+
       });
     } else {
       this.searchService.searchUsers('').subscribe(results => {
@@ -342,43 +339,13 @@ export class HeaderComponent {
   }
 
   private async getChatDocument(chatId: string): Promise<any> {
-    try {
-      const chatSnap = await runInInjectionContext(this.injector, async () => {
-        const chatDocRef = doc(this.firestore, 'chats', chatId);
-        return await getDoc(chatDocRef);
-      });
-      return chatSnap.exists() ? chatSnap.data() : null;
-    } catch (error) {
-      console.error('Error getting chat document:', error);
-      return null;
-    }
+    return null; // Wird später mit eigenem Backend implementiert
   }
 
   private async getUserById(userId: string): Promise<any> {
-    try {
-      const userSnap = await this.getUserSnapshot(userId);
-      return userSnap?.exists() ? this.mapUserData(userSnap) : null;
-    } catch (error) {
-      console.error('Error getting user by ID:', error);
-      return null;
-    }
-  }
-
-  private async getUserSnapshot(userId: string) {
-    return await runInInjectionContext(this.injector, async () => {
-      const userDocRef = doc(this.firestore, 'users', userId);
-      return await getDoc(userDocRef);
+    return new Promise((resolve) => {
+      this.dataUser.getUserById(userId).subscribe(user => resolve(user));
     });
-  }
-
-  private mapUserData(userSnap: any) {
-    const userData = userSnap.data();
-    return {
-      userId: userSnap.id,
-      name: userData['name'],
-      avatar: userData['avatar'],
-      active: userData['active'] || false
-    };
   }
 
   mobileHeader() {

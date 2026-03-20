@@ -37,7 +37,7 @@ export class SelectUserToAddComponent {
   addUserId: string[] = [];
   searchInput: string = '';
   router = inject(Router);
-  currentChannelId?: string;   
+  currentChannelId?: string;
   channelName?: string;
   channelDescription?: string;
   placeHolderActive = false;
@@ -48,12 +48,17 @@ export class SelectUserToAddComponent {
       this.newChannel.channelname = this.channelName ?? '';
       this.newChannel.description = this.channelDescription ?? '';
     }
-    if(!this.selectAllUsersInChannel) {
+    if (!this.selectAllUsersInChannel) {
       this.createChannelWithNewUsernames();
     } else if (this.selectAllUsersInChannel) {
       this.createChannelWithUsersInChannel();
     }
-    await this.channelService.addNewChannel(this.newChannel.toJSON(),this.addUserId,this.channelService.currentUserId).then(() => {
+
+    await this.channelService.addNewChannel(
+      this.channelName ?? '',
+      this.channelDescription ?? '',
+      this.addUserId
+    ).then(() => {
       this.close();
       this.addUserId = [];
       this.filteredUsers = [];
@@ -93,7 +98,7 @@ export class SelectUserToAddComponent {
       this.placeHolderActive = false;
       return;
     }
-      this.userService.showFilteredUsers(this.searchInput).subscribe((users) => {
+    this.userService.showFilteredUsers(this.searchInput).subscribe((users) => {
       this.filteredUsers = users;
       this.placeHolderActive = true;
     });
@@ -104,7 +109,7 @@ export class SelectUserToAddComponent {
   }
 
   selectUser(user: any) {
-    if (!this.selectedUsers.some(u => u.userId === user.userId) && this.selectedUsers.length < 2 ) {
+    if (!this.selectedUsers.some(u => u.userId === user.userId) && this.selectedUsers.length < 2) {
       this.selectedUsers.push(user);
     }
     this.showSelectedUser = true;
@@ -113,11 +118,11 @@ export class SelectUserToAddComponent {
     this.placeHolderActive = false;
   }
 
-   private updateBtnStatus() {
-    if(!this.selectAllUsersInChannel) {
-       const count = this.selectedUsers.length;
-    this.showSelectedUser = count > 0;
-    this.isEnabled = count > 0;
+  private updateBtnStatus() {
+    if (!this.selectAllUsersInChannel) {
+      const count = this.selectedUsers.length;
+      this.showSelectedUser = count > 0;
+      this.isEnabled = count > 0;
     }
   }
 
@@ -147,9 +152,9 @@ export class SelectUserToAddComponent {
   createChannelWithUsersInChannel() {
     this.addUserId = [];
     this.userService.userAvatarInChannel$.subscribe(users => {
-        users.forEach(element => {
-            this.addUserId.push(element.userId);
-        });
+      users.forEach(element => {
+        this.addUserId.push(element.userId);
+      });
     });
   }
 

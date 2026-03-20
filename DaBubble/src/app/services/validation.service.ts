@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, getDocs, query, where } from '@angular/fire/firestore';
-import { Firestore } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export function isValidPassword(password: string) {
   if (!password || password.length < 8) {
@@ -13,7 +14,7 @@ export function isValidPassword(password: string) {
   providedIn: 'root'
 })
 export class ValidationService {
-  private firestore = inject(Firestore);
+  private http = inject(HttpClient);
 
   isValidPassword(password: string): boolean {
     return isValidPassword(password);
@@ -31,10 +32,16 @@ export class ValidationService {
     return '';
   }
 
+  async isEmailTaken(email: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.http.get<any[]>(`${environment.apiUrl}/users`)
+        .subscribe(users => {
+          resolve(users.some(u => u.email === email));
+        });
+    });
+  }
+
   async checkEmailExists(email: string): Promise<boolean> {
-    const usersRef = collection(this.firestore, 'users');
-    const q = query(usersRef, where('email', '==', email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
+    return this.isEmailTaken(email);
   }
 }
