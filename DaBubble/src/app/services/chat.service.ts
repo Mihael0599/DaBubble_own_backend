@@ -72,8 +72,15 @@ export class ChatService {
     this.http.get<any[]>(
       `${environment.apiUrl}/messages/channel/${channelId}`
     ).subscribe(messages => {
-      this._messages$.next(messages);
-      this.hasMessages = messages.length > 0;
+      const normalized = messages.map(m => ({
+        ...m,
+        timestamp: m.sentAt,
+        senderId: m.senderId || m.sender?.id,
+        senderName: m.sender?.displayName,
+        text: m.content
+      }));
+      this._messages$.next(normalized);
+      this.hasMessages = normalized.length > 0;
     });
   }
 
@@ -87,14 +94,23 @@ export class ChatService {
   }
 
   async sendChatMessage(type: string, messageText: string, senderId: any, name?: string, avatar?: string) {
-    console.log('chatId:', this.chatId, 'chatMode:', this.chatMode);
+    console.log('chatId:', this.chatId, 'chatMode:', this.chatMode); // Debug
     const body = {
       content: messageText,
       channelId: this.chatMode === 'channels' ? parseInt(this.chatId) : null
     };
-    console.log('Sending:', body);
     this.http.post(`${environment.apiUrl}/messages`, body).subscribe({
-      error: (err) => console.error('Error details:', err.error)
+      next: (msg: any) => {
+        const normalized = {
+          ...msg,
+          timestamp: msg.sentAt,
+          senderId: msg.senderId,
+          text: msg.content
+        };
+        const current = this._messages$.value;
+        this._messages$.next([...current, normalized]);
+      },
+      error: (err) => console.error('Error:', err)
     });
   }
 
@@ -190,7 +206,7 @@ export class ChatService {
     const messages = messageArray || this.messages;
     if (!messages || index >= messages.length || index < 1) return true;
     const prevMsg = messages[index - 1];
-    const prevDate = this.getDateWithoutTime(new Date(prevMsg?.sentAt || prevMsg?.timestamp));
+    const prevDate = this.getDateWithoutTime(new Date(prevMsg?.timestamp));
     if (!prevDate) return true;
     return currentDate.getTime() !== prevDate.getTime();
   }
@@ -201,8 +217,8 @@ export class ChatService {
   }
 
   getDateLabel(timestamp: any, messageIndex: number, messageArray?: any[]): string {
-    const date = timestamp ? new Date(timestamp) : null;
-    if (!date) return '';
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
     if (!this.isFirstMessageOfDay(timestamp, messageIndex, messageArray)) return '';
     const today = new Date();
     const yesterday = new Date();

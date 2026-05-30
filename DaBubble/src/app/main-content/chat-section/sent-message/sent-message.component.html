@@ -3,12 +3,12 @@
     <div class="users-message-container" *ngIf="message.senderId == channelService.currentUserId">
         <div class="message-container">
             <div>
-                <img class="user-logo" src="avatar/{{channelService.currentUser?.avatar}}" alt="">
+                <img class="user-logo" src="avatar/{{channelService.currentUser?.avatarUrl}}" alt="">
             </div>
             <div class="message-info">
                 <div class="user-date-container">
-                    <p>{{message.timestamp?.toDate() | date:'HH:mm'}}</p>
-                    <span>{{channelService.currentUser?.name}}</span>
+                    <p>{{message.timestamp | date:'HH:mm'}}</p>
+                    <span>{{channelService.currentUser?.displayName}}</span>
                 </div>
                 <div class="message-content" [ngClass]="{
                 'editMessageActive' :editMessageActive, }">

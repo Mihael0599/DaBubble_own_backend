@@ -190,6 +190,7 @@ export class WorkSpaceSectionComponent implements OnInit, OnDestroy {
 
   async openChannel(type: string, channelName: string, channelId: string, channelDescription: string,) {
     this.chatService.chatMode = 'channels';
+    this.chatService.chatId = channelId; 
     this.activeUserId = '';
     this.router.navigate(['mainpage', this.channelService.currentUserId, 'channels', channelId,]);
     this.userstorage.channelId = channelId;

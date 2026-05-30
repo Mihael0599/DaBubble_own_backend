@@ -32,14 +32,16 @@ export class ValidationService {
     return '';
   }
 
-  async isEmailTaken(email: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.http.get<any[]>(`${environment.apiUrl}/users`)
-        .subscribe(users => {
-          resolve(users.some(u => u.email === email));
-        });
+async isEmailTaken(email: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    this.http.get<boolean>(
+      `${environment.apiUrl}/users/check-email?email=${email}`
+    ).subscribe({
+      next: (exists) => resolve(exists),
+      error: () => resolve(false)
     });
-  }
+  });
+}
 
   async checkEmailExists(email: string): Promise<boolean> {
     return this.isEmailTaken(email);

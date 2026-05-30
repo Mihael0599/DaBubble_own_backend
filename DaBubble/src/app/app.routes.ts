@@ -16,7 +16,7 @@ export const routes: Routes = [
   { path: 'imprint', component: ImprintComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'password-send-mail', component: PasswordSendEmailComponent },
-  { path: 'password-reset', component: PasswordResetComponent },
+  { path: 'reset-password', component: PasswordResetComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'avatar', component: AvatarComponent },
   {

@@ -70,4 +70,12 @@ public class UsersController : ControllerBase
         // Status wird später implementiert
         return Ok();
     }
+
+    [HttpGet("check-email")]
+    [AllowAnonymous]
+    public async Task<ActionResult<bool>> CheckEmail([FromQuery] string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        return Ok(user != null);
+    }
 }

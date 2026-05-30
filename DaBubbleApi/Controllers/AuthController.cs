@@ -73,26 +73,33 @@ using Microsoft.AspNetCore.Identity;
     public async Task<IActionResult> ForgotPassword([FromBody] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null) return Ok();
+        if (user == null) return Ok(new { message = "E-Mail wurde gesendet" });
 
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        var encodedToken = Uri.EscapeDataString(token); 
-        var resetLink = $"http://localhost:4200/reset-password?email={email}&token={encodedToken}";
+        try
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Uri.EscapeDataString(token);
+            var resetLink = $"http://localhost:4200/reset-password?email={email}&token={encodedToken}";
 
-        await _emailService.SendPasswordResetEmailAsync(email, resetLink);
-        return Ok("E-mail wurde gesendet");
+            await _emailService.SendPasswordResetEmailAsync(email, resetLink);
+            return Ok(new { message = "E-Mail wurde gesendet" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(ResetPasswordDto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null) return BadRequest("User nicht gefunden");
+        if (user == null) return BadRequest(new { message = "User nicht gefunden" });
 
         var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
-        if (!result.Succeeded) return BadRequest(result.Errors);
+        if (!result.Succeeded) return BadRequest(new { message = result.Errors.First().Description });
 
-        return Ok("Password erfolgreich geändert");
+        return Ok(new { message = "Passwort erfolgreich geändert" });
     }
 
 }

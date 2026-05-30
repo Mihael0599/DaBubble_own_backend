@@ -113,7 +113,8 @@ export class UserService {
   resetPassword(email: string, token: string, newPassword: string): Observable<any> {
     return this.http.post(
       `${environment.apiUrl}/auth/reset-password`,
-      { email, token, newPassword }
+      { email, token, newPassword },
+      { responseType: 'json' }
     );
   }
 
